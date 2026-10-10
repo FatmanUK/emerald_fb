@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Lock syntax tokens, from fuzzball/include/game.h.

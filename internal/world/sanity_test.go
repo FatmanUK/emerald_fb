@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // sane builds a small, consistent world: a room (#0), a player in it

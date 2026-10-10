@@ -16,9 +16,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/admit"
-	"github.com/FatmanUK/fuzzball_emerald/internal/game"
-	"github.com/FatmanUK/fuzzball_emerald/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/admit"
+	"github.com/FatmanUK/emerald_fb/internal/game"
+	"github.com/FatmanUK/emerald_fb/internal/session"
 )
 
 // readLimit bounds a single line of input, so a client cannot make

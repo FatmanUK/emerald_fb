@@ -1,6 +1,6 @@
 package muf
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+import "github.com/FatmanUK/emerald_fb/internal/ascii"
 
 // primIndex maps a folded primitive name to its number, which is its
 // index in primNames plus one. Zero means "not a primitive", as

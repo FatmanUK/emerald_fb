@@ -1,6 +1,6 @@
 package muf
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+import "github.com/FatmanUK/emerald_fb/internal/ascii"
 
 // primFunc implements one primitive. Returning a non-nil Result stops
 // the interpreter; most primitives return nil and let it advance.

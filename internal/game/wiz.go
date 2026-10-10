@@ -3,12 +3,12 @@ package game
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/match"
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/session"
-	"github.com/FatmanUK/fuzzball_emerald/internal/tune"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/match"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/tune"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // cmdStats counts what is in the database, for everyone or for one

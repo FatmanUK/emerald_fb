@@ -3,7 +3,7 @@ package compiler
 import (
 	"strconv"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
 )
 
 // Result carries what a compile produced beyond the program itself.

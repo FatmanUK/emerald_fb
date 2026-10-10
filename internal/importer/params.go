@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/password"
-	"github.com/FatmanUK/fuzzball_emerald/internal/tune"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/password"
+	"github.com/FatmanUK/emerald_fb/internal/tune"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // applyParam handles one line of a dump's parameter block.

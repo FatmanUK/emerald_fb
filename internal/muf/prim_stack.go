@@ -1,6 +1,6 @@
 package muf
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ref"
+import "github.com/FatmanUK/emerald_fb/internal/ref"
 
 // Stack and variable primitives.
 

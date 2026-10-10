@@ -1,8 +1,8 @@
 package world
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // envDepth bounds an environment walk. A damaged world can contain a

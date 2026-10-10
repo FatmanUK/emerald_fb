@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
 )
 
 // GUIPackage is the MCP package that draws dialogs on a client, from

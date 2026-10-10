@@ -3,9 +3,9 @@ package game
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/boolexp"
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/boolexp"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // lockCommandSpec is one of the standard lock-setting commands, all

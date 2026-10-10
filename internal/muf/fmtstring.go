@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // refNothing is #-1, which a missing dbref field renders as.

@@ -1,6 +1,6 @@
 package world
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ref"
+import "github.com/FatmanUK/emerald_fb/internal/ref"
 
 // MaxParentDepth is MAX_PARENT_DEPTH (config.h:118), the bound
 // upstream puts on the two loop checks that walk the environment.

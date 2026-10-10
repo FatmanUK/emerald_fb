@@ -3,8 +3,8 @@ package help
 import (
 	"slices"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // Apply seeds a world's help corpora from the built-in content and

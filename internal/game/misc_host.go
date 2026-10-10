@@ -1,14 +1,14 @@
 package game
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/logging"
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/logging"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // ignoreProp is upstream's IGNORE_PROP: a hidden reflist under a

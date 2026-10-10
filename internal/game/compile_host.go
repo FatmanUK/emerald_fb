@@ -3,7 +3,7 @@ package game
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Controls implements muf.Host for PROGRAM_GETLINES's own controls()

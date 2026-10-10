@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
 )
 
 // maxInlineValue is how long an argument may be before it is sent on

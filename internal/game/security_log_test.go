@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // securityRecords captures the audit trail a harness produces.

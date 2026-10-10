@@ -14,17 +14,17 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/admit"
-	"github.com/FatmanUK/fuzzball_emerald/internal/game"
-	"github.com/FatmanUK/fuzzball_emerald/internal/help"
-	"github.com/FatmanUK/fuzzball_emerald/internal/importer"
-	"github.com/FatmanUK/fuzzball_emerald/internal/logging"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/store"
-	"github.com/FatmanUK/fuzzball_emerald/internal/transport/tlsline"
-	"github.com/FatmanUK/fuzzball_emerald/internal/transport/wss"
-	"github.com/FatmanUK/fuzzball_emerald/internal/tune"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/admit"
+	"github.com/FatmanUK/emerald_fb/internal/game"
+	"github.com/FatmanUK/emerald_fb/internal/help"
+	"github.com/FatmanUK/emerald_fb/internal/importer"
+	"github.com/FatmanUK/emerald_fb/internal/logging"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/store"
+	"github.com/FatmanUK/emerald_fb/internal/transport/tlsline"
+	"github.com/FatmanUK/emerald_fb/internal/transport/wss"
+	"github.com/FatmanUK/emerald_fb/internal/tune"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 func cmdServe(args []string) error {

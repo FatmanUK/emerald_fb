@@ -5,10 +5,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/password"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/session"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/password"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // noop is a round trip through the world goroutine, which is what

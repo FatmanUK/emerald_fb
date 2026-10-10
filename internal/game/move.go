@@ -1,9 +1,9 @@
 package game
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/match"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/match"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // useExit is do_move's tail: can_doit, then trigger.

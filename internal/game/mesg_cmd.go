@@ -3,8 +3,8 @@ package game
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/props"
 )
 
 // mesgCommandSpec is one of the standard message-setting commands,

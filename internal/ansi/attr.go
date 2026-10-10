@@ -8,7 +8,7 @@
 // comment for why they are two functions and not one.
 package ansi
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+import "github.com/FatmanUK/emerald_fb/internal/ascii"
 
 // Reset ends every run of attributes, so text after one is
 // unaffected.

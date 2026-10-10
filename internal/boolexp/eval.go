@@ -1,9 +1,9 @@
 package boolexp
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Eval reports whether a lock passes for player against thing, the

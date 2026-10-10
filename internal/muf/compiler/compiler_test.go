@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
 )
 
 // compile is a shorthand that fails the test on error.

@@ -12,8 +12,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Type is a property's value type. The values are stored in legacy

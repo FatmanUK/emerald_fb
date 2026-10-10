@@ -1,6 +1,6 @@
 package world
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ref"
+import "github.com/FatmanUK/emerald_fb/internal/ref"
 
 // RepairChains checks every container's contents and exits lists
 // against what the objects themselves claim, and rebuilds any that

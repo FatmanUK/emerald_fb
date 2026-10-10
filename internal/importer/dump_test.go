@@ -7,10 +7,10 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/password"
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/password"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // openFixture opens a test fixture, skipping the test if it is

@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ansi"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ansi"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // STOD, OTELL, PRONOUN_SUB, STRENCRYPT, STRDECRYPT, TEXTATTR and

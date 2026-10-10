@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/help"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/help"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // The manual viewer and editor.

@@ -3,7 +3,7 @@ package match
 import (
 	"math/rand"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // choose_thing (match.c:130) decides which of two candidates the

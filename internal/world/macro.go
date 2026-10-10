@@ -3,8 +3,8 @@ package world
 import (
 	"sort"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Macro is one entry in the MUF editor's macro table, upstream's

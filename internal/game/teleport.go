@@ -3,9 +3,9 @@ package game
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/match"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/match"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // internal/game/teleport.go is wiz.c:102's do_teleport, which is four

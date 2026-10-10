@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // BacktraceFrame is one level of a failing program's call stack.

@@ -3,8 +3,8 @@ package mpi
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/props"
 )
 
 // The property functions beyond {prop} and {store}.

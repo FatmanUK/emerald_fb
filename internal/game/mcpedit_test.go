@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // `@mcpedit` and `@mcpprogram` ship a program's text to the client

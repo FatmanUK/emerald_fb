@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // TestHelpRoundTrip checks a corpus survives the store: order,

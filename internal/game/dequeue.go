@@ -1,9 +1,9 @@
 package game
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // `dequeue_prog(player, 2)` (`timequeue.c:1455`), which is "kill only

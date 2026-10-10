@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/importer"
-	"github.com/FatmanUK/fuzzball_emerald/internal/password"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/importer"
+	"github.com/FatmanUK/emerald_fb/internal/password"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // TestImportRoundTripKeepsAPlayerConnectable walks the whole path an

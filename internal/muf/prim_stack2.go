@@ -1,6 +1,6 @@
 package muf
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ref"
+import "github.com/FatmanUK/emerald_fb/internal/ref"
 
 // INTERP runs another program as a subroutine and takes back whatever
 // it left on its stack, src/p_stack.c's one remaining primitive.

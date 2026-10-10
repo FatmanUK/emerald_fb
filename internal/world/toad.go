@@ -3,8 +3,8 @@ package world
 import (
 	"fmt"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // SendHome moves an object to where it belongs when its container is

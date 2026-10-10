@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
 )
 
 // The corpora the help system serves. Upstream keeps each of these in

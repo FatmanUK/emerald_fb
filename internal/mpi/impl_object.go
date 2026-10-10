@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/props"
 )
 
 // The object and world introspection functions: what an object is,

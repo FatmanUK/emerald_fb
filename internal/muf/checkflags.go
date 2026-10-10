@@ -3,8 +3,8 @@ package muf
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // FlagCheck is upstream's struct flgchkdat: a compiled flag-match

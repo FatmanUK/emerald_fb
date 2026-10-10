@@ -1,12 +1,12 @@
 package game
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/mcp"
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/session"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/mcp"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // The MUF host's MCP methods. A program reaches a connection's

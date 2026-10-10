@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // The gripe log.

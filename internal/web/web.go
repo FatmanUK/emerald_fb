@@ -27,8 +27,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/store"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/store"
 )
 
 //go:embed templates

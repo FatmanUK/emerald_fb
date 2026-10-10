@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/password"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/password"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Authentication is against the world's own wizards: the same name

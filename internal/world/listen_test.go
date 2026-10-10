@@ -3,8 +3,8 @@ package world
 import (
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 func TestIsListenPath(t *testing.T) {

@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/password"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/store"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/password"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/store"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // schemaSeq keeps test schema names distinct within a run.

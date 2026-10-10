@@ -11,8 +11,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/config"
-	"github.com/FatmanUK/fuzzball_emerald/internal/logging"
+	"github.com/FatmanUK/emerald_fb/internal/config"
+	"github.com/FatmanUK/emerald_fb/internal/logging"
 )
 
 // version is stamped at build time with -ldflags "-X

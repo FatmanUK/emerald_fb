@@ -1,11 +1,11 @@
 package game
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/session"
-	"github.com/FatmanUK/fuzzball_emerald/internal/timefmt"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/timefmt"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // `dump_users` (`interface.c:744`), which Emerald had as a table of

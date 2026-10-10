@@ -3,7 +3,7 @@ package muf
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/match"
+	"github.com/FatmanUK/emerald_fb/internal/match"
 )
 
 // BLESSPROP, UNBLESSPROP, BLESSED?, PROP-NAME-OK?, PARSEMPI,

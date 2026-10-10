@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 func TestSendAndClose(t *testing.T) {

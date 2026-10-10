@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ansi"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/timefmt"
+	"github.com/FatmanUK/emerald_fb/internal/ansi"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/timefmt"
 )
 
 // The time, formatting and remaining odds and ends.

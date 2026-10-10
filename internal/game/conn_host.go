@@ -3,9 +3,9 @@ package game
 import (
 	"sort"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/session"
 )
 
 // SetDescrSize implements muf.Host for SETWIDTH and SETHEIGHT — the

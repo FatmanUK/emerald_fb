@@ -5,9 +5,9 @@ import (
 	"sort"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // procState says what a suspended program is waiting for.

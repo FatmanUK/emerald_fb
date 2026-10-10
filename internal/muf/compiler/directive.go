@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
 )
 
 // directive handles a $-prefixed compiler directive.

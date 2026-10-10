@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // sysVal reads one _sys value off #0, or reports it absent.

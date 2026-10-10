@@ -3,8 +3,8 @@ package muf
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/timefmt"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/timefmt"
 )
 
 // EVENT_COUNT, EVENT_EXISTS, EXT-NAME-OK?, READ_WANTS_BLANKS,

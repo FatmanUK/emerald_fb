@@ -1,6 +1,6 @@
 package muf
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ref"
+import "github.com/FatmanUK/emerald_fb/internal/ref"
 
 // COMPILE, COMPILED?, UNCOMPILE, PROGRAM_GETLINES and NEXTENTRANCE,
 // from src/p_db.c.

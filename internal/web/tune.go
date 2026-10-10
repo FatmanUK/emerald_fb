@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/tune"
+	"github.com/FatmanUK/emerald_fb/internal/tune"
 )
 
 // The @tune editor.

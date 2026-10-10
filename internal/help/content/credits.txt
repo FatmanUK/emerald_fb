@@ -9,6 +9,6 @@ everyone who worked on TinyMUCK before it. Emerald owes all of its
 behaviour to theirs; where the two disagree, theirs is the original.
 
   Fuzzball     https://www.fuzzball.org/
-  Emerald      https://github.com/FatmanUK/fuzzball_emerald
+  Emerald      https://github.com/FatmanUK/emerald_fb
 
 Type "@version" for what this server was built from.

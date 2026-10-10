@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
 )
 
 // impl is one MPI function's implementation.

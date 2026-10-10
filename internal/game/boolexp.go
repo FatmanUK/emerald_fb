@@ -1,13 +1,13 @@
 package game
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/boolexp"
-	"github.com/FatmanUK/fuzzball_emerald/internal/match"
-	"github.com/FatmanUK/fuzzball_emerald/internal/mpi"
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/boolexp"
+	"github.com/FatmanUK/emerald_fb/internal/match"
+	"github.com/FatmanUK/emerald_fb/internal/mpi"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // lockHost implements boolexp.Host against the live world, the way

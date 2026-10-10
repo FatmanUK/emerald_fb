@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/store"
+	"github.com/FatmanUK/emerald_fb/internal/store"
 )
 
 // getLogin shows the login form. Somebody already logged in goes

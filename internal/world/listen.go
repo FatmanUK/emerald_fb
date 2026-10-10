@@ -1,8 +1,8 @@
 package world
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // The three propdirs that make an object a listener, upstream's

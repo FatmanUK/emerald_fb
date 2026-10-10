@@ -13,9 +13,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ansi"
-	"github.com/FatmanUK/fuzzball_emerald/internal/mcp"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ansi"
+	"github.com/FatmanUK/emerald_fb/internal/mcp"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // outputDepth bounds how far a connection may fall behind before it

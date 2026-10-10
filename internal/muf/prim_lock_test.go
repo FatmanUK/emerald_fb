@@ -3,8 +3,8 @@ package muf
 import (
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/boolexp"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/boolexp"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // lockTestHost implements only what TESTLOCK and LOCKED? need.

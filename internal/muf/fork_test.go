@@ -3,7 +3,7 @@ package muf
 import (
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 func TestForkCopiesTheStackDeeply(t *testing.T) {

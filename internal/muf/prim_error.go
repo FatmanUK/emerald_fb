@@ -1,6 +1,6 @@
 package muf
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+import "github.com/FatmanUK/emerald_fb/internal/ascii"
 
 // The arithmetic error flags, which a program inspects rather than
 // being aborted by.

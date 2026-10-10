@@ -1,13 +1,13 @@
 
-$ export NETWORK='fuzzball'
-$ export PG_CONTAINER='fuzzball-db'
+$ export NETWORK='emerald'
+$ export PG_CONTAINER='emerald-db'
 $ podman network exists $NETWORK || podman network create $NETWORK
 $ podman rm -f $PG_CONTAINER
 
 $ export DB_PORT='15432'
 $ export DB_USER='emerald'
 $ export DB_PASSWORD=$(sha256sum <(date +%Y%m%d%H%M%S) | cut -b -20)
-$ export DB_NAME='fuzzball_emerald'
+$ export DB_NAME='fbemerald'
 $ export DB_IMAGE='docker.io/library/postgres:17-alpine'
 $ podman run -d --name $PG_CONTAINER --network $NETWORK \
 	-e POSTGRES_USER=$DB_USER \
@@ -37,7 +37,9 @@ $ export LINE_PORT='14202'
 $ export WSS_PORT='14203'
 $ export DB_URL_POD="postgres://$DB_USER:$DB_PASSWORD@$PG_CONTAINER:$DB_PORT/$DB_NAME?sslmode=disable"
 $ export DB_URL_POD="postgres://$DB_USER:$DB_PASSWORD@192.168.5.214:15432/$DB_NAME?sslmode=disable"
-$ export IMAGE='ghcr.io/fatmanuk/fuzzball_emerald'
+# The image moved from ghcr.io/fatmanuk/fuzzball_emerald, which still
+# holds every 'latest' pushed before the rename and is now a dead end.
+$ export IMAGE='ghcr.io/fatmanuk/emerald_fb'
 $ export TAG='latest'
 
 $ export DB_URL_POD="postgres://$DB_USER:$DB_PASSWORD@192.168.5.214:$DB_PORT/$DB_NAME?sslmode=disable"

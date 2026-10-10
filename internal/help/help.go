@@ -28,7 +28,7 @@ import (
 	"embed"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // Version identifies this release of the seed content. It is recorded

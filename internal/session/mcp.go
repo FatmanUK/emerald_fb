@@ -1,6 +1,6 @@
 package session
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/mcp"
+import "github.com/FatmanUK/emerald_fb/internal/mcp"
 
 // MCPPackages lists the out-of-band packages this server offers, with
 // the version ranges from src/mcp.c.

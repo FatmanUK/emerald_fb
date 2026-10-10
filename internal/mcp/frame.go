@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
 )
 
 // Frame is the MCP state of one connection.

@@ -5,8 +5,8 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/boolexp"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/boolexp"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Value is a runtime stack value.

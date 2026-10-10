@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Unlocked is what Unparse renders a nil (TRUE_BOOLEXP) expression

@@ -1,6 +1,6 @@
 package ref
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+import "github.com/FatmanUK/emerald_fb/internal/ascii"
 
 // flagNames maps a flag's spellings to its bit, in the order
 // upstream's str_to_flag tests them.

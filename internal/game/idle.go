@@ -3,8 +3,8 @@ package game
 import (
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/session"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // The descriptor sweep, which is the second half of upstream's main

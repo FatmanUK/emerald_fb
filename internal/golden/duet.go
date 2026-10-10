@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/game"
-	"github.com/FatmanUK/fuzzball_emerald/internal/importer"
-	"github.com/FatmanUK/fuzzball_emerald/internal/session"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/game"
+	"github.com/FatmanUK/emerald_fb/internal/importer"
+	"github.com/FatmanUK/emerald_fb/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // Two or three seats, which is the last class of output a one-seat

@@ -3,7 +3,7 @@ package mpi
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
 )
 
 // {tell}'s and {otell}'s prefixing rules (`mfuns.c:3663`, `:3722`),

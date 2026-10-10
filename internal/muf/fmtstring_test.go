@@ -3,7 +3,7 @@ package muf
 import (
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // fmtTestHost answers the one question the '%D' directive asks.

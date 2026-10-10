@@ -3,7 +3,7 @@ package mpi
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/props"
 )
 
 // The looping and evaluating functions.

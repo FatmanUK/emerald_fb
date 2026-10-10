@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/ascii"
 )
 
 // The remaining string primitives: ANSI handling, character

@@ -10,10 +10,10 @@ import (
 
 	"github.com/coder/websocket"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/game"
-	"github.com/FatmanUK/fuzzball_emerald/internal/importer"
-	"github.com/FatmanUK/fuzzball_emerald/internal/transport/wss"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/game"
+	"github.com/FatmanUK/emerald_fb/internal/importer"
+	"github.com/FatmanUK/emerald_fb/internal/transport/wss"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // startWSS serves the starter world over WebSocket-over-TLS.

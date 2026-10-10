@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 func TestPIDPushesFramesOwnPID(t *testing.T) {

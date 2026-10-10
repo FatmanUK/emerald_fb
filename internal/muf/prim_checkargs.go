@@ -1,6 +1,6 @@
 package muf
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ref"
+import "github.com/FatmanUK/emerald_fb/internal/ref"
 
 // CHECKARGS is prim_checkargs (p_stack.c:1143), the largest single
 // primitive in the language: a parser over about twenty type

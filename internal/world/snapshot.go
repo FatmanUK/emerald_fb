@@ -1,7 +1,7 @@
 package world
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Snapshot is a batch of changes handed to the persister. Objects in

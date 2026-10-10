@@ -3,7 +3,7 @@ package world
 import (
 	"fmt"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Violation is one problem found in the object graph.

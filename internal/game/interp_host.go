@@ -1,8 +1,8 @@
 package game
 
 import (
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // Interp implements muf.Host for INTERP: run prog to completion in

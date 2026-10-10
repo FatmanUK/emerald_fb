@@ -10,14 +10,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/logging"
-	"github.com/FatmanUK/fuzzball_emerald/internal/mcp"
-	"github.com/FatmanUK/fuzzball_emerald/internal/mpi"
-	"github.com/FatmanUK/fuzzball_emerald/internal/muf"
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/session"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/logging"
+	"github.com/FatmanUK/emerald_fb/internal/mcp"
+	"github.com/FatmanUK/emerald_fb/internal/mpi"
+	"github.com/FatmanUK/emerald_fb/internal/muf"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // maxInputLen bounds a single line of input, matching Fuzzball's

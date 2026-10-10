@@ -20,10 +20,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/config"
-	"github.com/FatmanUK/fuzzball_emerald/internal/logging"
-	"github.com/FatmanUK/fuzzball_emerald/internal/store"
-	"github.com/FatmanUK/fuzzball_emerald/internal/web"
+	"github.com/FatmanUK/emerald_fb/internal/config"
+	"github.com/FatmanUK/emerald_fb/internal/logging"
+	"github.com/FatmanUK/emerald_fb/internal/store"
+	"github.com/FatmanUK/emerald_fb/internal/web"
 )
 
 // version is stamped at build time with -ldflags "-X

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 func TestRepairLeavesAHealthyWorldAlone(t *testing.T) {

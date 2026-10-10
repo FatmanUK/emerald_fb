@@ -3,8 +3,8 @@ package game
 import (
 	"strings"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/mcp"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/mcp"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // `@mcpedit` and `@mcpprogram` are `@edit` and `@program` for a

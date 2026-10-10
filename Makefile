@@ -370,8 +370,8 @@ golden-clean: ## Remove the oracle image
 # --- running in a container -------------------------------------------------
 
 PUBLISH_DATE  := $(shell date +%Y%m%d)
-PUBLISH_IMAGE ?= ghcr.io/fatmanuk/fuzzball_emerald
-CFG_PUBLISH_IMAGE ?= ghcr.io/fatmanuk/fbe_config
+PUBLISH_IMAGE ?= ghcr.io/fatmanuk/emerald_fb
+CFG_PUBLISH_IMAGE ?= ghcr.io/fatmanuk/fbeconfig
 
 .PHONY: pod-build
 pod-build: ## Build the container image

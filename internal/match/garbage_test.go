@@ -3,8 +3,8 @@ package match
 import (
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
-	"github.com/FatmanUK/fuzzball_emerald/internal/world"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
 // TestAbsoluteMatchesGarbage pins the difference between upstream's

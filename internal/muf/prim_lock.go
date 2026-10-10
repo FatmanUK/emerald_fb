@@ -1,6 +1,6 @@
 package muf
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ref"
+import "github.com/FatmanUK/emerald_fb/internal/ref"
 
 // permissions is upstream's permissions(): whether player may act on
 // thing through basic ownership — itself, HOME, an exit owned by

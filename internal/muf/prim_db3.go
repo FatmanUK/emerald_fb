@@ -1,6 +1,6 @@
 package muf
 
-import "github.com/FatmanUK/fuzzball_emerald/internal/ref"
+import "github.com/FatmanUK/emerald_fb/internal/ref"
 
 // The player- and database-management half of src/p_db.c: NEWPLAYER,
 // COPYPLAYER, TOADPLAYER, PNAME_HISTORY, COPYOBJ, PROGRAM_SETLINES

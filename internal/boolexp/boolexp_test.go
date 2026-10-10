@@ -3,8 +3,8 @@ package boolexp
 import (
 	"testing"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/props"
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/props"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // fakeHost is a minimal, in-memory Host for testing the parser and

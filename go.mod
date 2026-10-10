@@ -1,4 +1,4 @@
-module github.com/FatmanUK/fuzzball_emerald
+module github.com/FatmanUK/emerald_fb
 
 go 1.26.5
 

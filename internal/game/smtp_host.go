@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/FatmanUK/fuzzball_emerald/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/ref"
 )
 
 // SMTP security modes, upstream's smtp_tls_mode (formerly

@@ -246,7 +246,7 @@ def main():
         "import (",
         '\t"time"',
         "",
-        '\t"github.com/FatmanUK/fuzzball_emerald/internal/ref"',
+        '\t"github.com/FatmanUK/emerald_fb/internal/ref"',
         ")",
         "",
         "// params is the full parameter table, ordered by name.",
