@@ -4,7 +4,7 @@ the file names rather than showing a header. Everything below is one
 file.
 ~
 server
-Fuzzball Emerald
+Emerald FB
 
 A reimplementation of Fuzzball MUCK 7 in Go. Existing MUF programs,
 MPI descriptions and .db worlds are meant to work unchanged.

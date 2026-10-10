@@ -1,4 +1,4 @@
-// Command fbemerald is the Fuzzball Emerald MUCK server.
+// Command fbemerald is the Emerald FB MUCK server.
 package main
 
 import (

@@ -234,7 +234,7 @@ func TestCreditsIsExactAndDoesNotShadowCreate(t *testing.T) {
 	h.login()
 
 	h.send("@credits")
-	if got := h.out(); !strings.Contains(got, "Fuzzball Emerald") {
+	if got := h.out(); !strings.Contains(got, "Emerald FB") {
 		t.Errorf("@credits:\n%s", got)
 	}
 
@@ -259,7 +259,7 @@ func TestPreLoginHelpIsTheConnectionText(t *testing.T) {
 	}
 	// The banner is what they have already read; the point of
 	// this text is that it is a different one.
-	if strings.Contains(got, "Fuzzball Emerald") {
+	if strings.Contains(got, "Emerald FB") {
 		t.Errorf("pre-login help re-sent the banner:\n%s", got)
 	}
 }
@@ -294,7 +294,7 @@ func TestWelcomeComesFromTheProplist(t *testing.T) {
 	if !strings.Contains(got, "The Hollow Tree") {
 		t.Errorf("the banner ignored the proplist:\n%s", got)
 	}
-	if strings.Contains(got, "Fuzzball Emerald") {
+	if strings.Contains(got, "Emerald FB") {
 		t.Errorf("the banner used the corpus as well:\n%s", got)
 	}
 }
@@ -337,7 +337,7 @@ func TestWelcomeFallsBackToTheDefault(t *testing.T) {
 	h.sync()
 
 	if got := drainDescriptor(d2); !strings.Contains(got,
-		"Fuzzball Emerald") {
+		"Emerald FB") {
 		t.Errorf("the banner has no fallback:\n%s", got)
 	}
 }

@@ -1,4 +1,4 @@
-# Fuzzball Emerald
+# Emerald FB
 
 [![Test](https://github.com/FatmanUK/emerald_fb/actions/workflows/test.yml/badge.svg)](https://github.com/FatmanUK/emerald_fb/actions/workflows/test.yml)
 [![Build](https://github.com/FatmanUK/emerald_fb/actions/workflows/build.yml/badge.svg)](https://github.com/FatmanUK/emerald_fb/actions/workflows/build.yml)
@@ -14,6 +14,11 @@ four deliberate departures:
 | Plaintext listener, optional SSL | **TLS only** — raw TLS and WebSocket-over-TLS |
 | Flat-file dump; the world freezes for every save | **Postgres**, written continuously in the background |
 | autotools and a hand-rolled Dockerfile | A single static binary in a rootless **Podman** container |
+
+Emerald FB is not affiliated with or endorsed by the Fuzzball MUCK project.
+It is an independent reimplementation; "FB" is attribution, the abbreviation
+upstream uses itself in `fbmuck`, `fb7` and `Muck2.2fb7.21`. Bugs here are not
+theirs, and where the two disagree, theirs is the original.
 
 The Fuzzball C sources this is ported from are vendored as a submodule at
 `fuzzball/`, as read-only reference:
@@ -459,10 +464,20 @@ and `ARRAY_NOTIFY_SECURE` is unreachable.
 
 GPL-3.0-or-later. See [LICENSE](LICENSE).
 
-Emerald is a port, not a clean-room reimplementation: it was written by reading
-Fuzzball 7's C line by line, and `CLAUDE.md` makes doing so mandatory before
-implementing anything that claims to match upstream. Fuzzball is GPLv3, so this
-is too.
+Emerald FB is a port, not a clean-room reimplementation: no C was copied, but
+the C was read, line by line, and `CLAUDE.md` makes reading it mandatory before
+implementing anything that claims to match upstream. "From scratch" is avoided
+deliberately, here and in `CLAUDE.md` and `BOOTSTRAP.md`: it reads as "without
+reference to the original", which is the opposite of how this was built.
+Fuzzball is GPLv3, so this is too.
+
+Two things look like Fuzzball's and are not this project claiming them. The
+git history is **grafted onto Fuzzball's C history** — walk `--all --reverse`
+and the first commit is an fbmuck CVS import, and `origin/upstream_master` is
+that history's branch — which is why the earliest commits here are somebody
+else's work, correctly attributed to them. And `testdata/starterdb/` is a
+byte-identical copy of upstream's database, kept as an importer fixture; see
+above.
 
 Upstream's licence carries an additional exception permitting linking against
 OpenSSL. Emerald does not carry it, which that exception's own terms allow:

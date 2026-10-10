@@ -229,7 +229,7 @@ func TestConnectAndWalkTheWorld(t *testing.T) {
 	c := ts.dial(t)
 
 	// The welcome banner arrives unprompted.
-	c.expect("Fuzzball Emerald")
+	c.expect("Emerald FB")
 
 	// #1's password is documented in the starter world's README.
 	c.send("connect One potrzebie")
@@ -315,7 +315,7 @@ func TestConnectAndWalkTheWorld(t *testing.T) {
 func TestBadPasswordIsRefused(t *testing.T) {
 	ts := startServer(t)
 	c := ts.dial(t)
-	c.expect("Fuzzball Emerald")
+	c.expect("Emerald FB")
 
 	c.send("connect One wrongpassword")
 	got := c.expect("player does not exist")
@@ -344,7 +344,7 @@ func TestLegacyPasswordIsUpgraded(t *testing.T) {
 	}
 
 	c := ts.dial(t)
-	c.expect("Fuzzball Emerald")
+	c.expect("Emerald FB")
 	c.send("connect One potrzebie")
 	c.expect("Room Zero")
 
@@ -365,7 +365,7 @@ func TestTwoPlayersSeeEachOther(t *testing.T) {
 	ts := startServer(t)
 
 	a := ts.dial(t)
-	a.expect("Fuzzball Emerald")
+	a.expect("Emerald FB")
 	a.send("connect One potrzebie")
 	a.expect("Room Zero")
 
@@ -377,7 +377,7 @@ func TestTwoPlayersSeeEachOther(t *testing.T) {
 	a.expect("Parameter set.")
 
 	b := ts.dial(t)
-	b.expect("Fuzzball Emerald")
+	b.expect("Emerald FB")
 	b.send("create Visitor hunter2")
 	// A new character starts wherever player_start points, which
 	// in the starter world is not Room Zero.

@@ -1,4 +1,4 @@
-# Fuzzball Emerald
+# Emerald FB
 #
 # Quick start, with a world of our own:
 #   make certs db-up init run        run on the host
@@ -83,7 +83,7 @@ LDFLAGS     := -s -w -X main.version=$(VERSION)
 
 .PHONY: help
 help: ## Show this help
-	@echo "Fuzzball Emerald"
+	@echo "Emerald FB"
 	@echo
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / \
 		{printf "  \033[1m%-14s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)

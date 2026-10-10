@@ -1,4 +1,4 @@
-# BOOTSTRAP.md — Fuzzball Emerald
+# BOOTSTRAP.md — Emerald FB
 
 Written so a fresh agent — or a competing LLM — can resume this project after
 total loss of session state. If this file and the repo disagree, **the repo
@@ -9,12 +9,13 @@ session; this file is the orientation around it.
 
 ## 1. Current Goal
 
-A from-scratch **Go** reimplementation of **Fuzzball MUCK 7**, behaviour-
-compatible with the original — existing MUF programs, MPI descriptions and
-`.db` worlds must work unchanged — while deliberately replacing four things
+A **Go** reimplementation of **Fuzzball MUCK 7** — a port rather than a
+clean-room rewrite: no C is copied, but the C is read. Behaviour-compatible
+with the original — existing MUF programs, MPI descriptions and `.db`
+worlds must work unchanged — while deliberately replacing four things
 that have aged worst in the C:
 
-| Fuzzball 7 (C) | Fuzzball Emerald (Go) |
+| Fuzzball 7 (C) | Emerald FB (Go) |
 |---|---|
 | Manual memory management | Go, memory-safe |
 | Plaintext + optional SSL | **TLS only** (raw TLS + WebSocket-over-TLS) |
@@ -499,8 +500,11 @@ are not "fixed" back by accident.
   upstream's, because `Location` is stored redundantly.
 - **Help texts live in Postgres**, not a game directory, which is why all
   fourteen `file_*` parameters naming one are inert. The content is Emerald's
-  own: upstream's `.raw` files are GPLv3, this repo declares no licence, and
-  their help documents ~50 commands that do not exist here.
+  own, though not for the reason this file used to give: "the `.raw` files
+  are GPLv3 and this repo declares no licence" was true when written and is
+  stale since `f94979b` — Emerald FB is GPL-3.0-or-later, so vendoring them
+  would be *permitted*. The reason that still holds is that their help
+  documents ~50 commands that do not exist here.
 - **The configurator reads the database directly** rather than loading a
   world, because the server may be running and holding the authoritative
   graph in its own memory.

@@ -197,7 +197,7 @@ func (s *Server) ownLockPasses(w *world.World,
 func defaultWelcome() []string {
 	return []string{
 		"",
-		"  Fuzzball Emerald",
+		"  Emerald FB",
 		"",
 		"  connect <name> <password>   to enter",
 		"  create <name> <password>    to make a new character",

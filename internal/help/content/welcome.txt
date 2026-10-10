@@ -1,5 +1,5 @@
 
-  Fuzzball Emerald
+  Emerald FB
 
   connect <name> <password>   to enter
   create <name> <password>    to make a new character

@@ -4,9 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A from-scratch Go reimplementation of [Fuzzball MUCK](https://www.fuzzball.org/)
-7, aiming for behaviour compatibility — existing MUF programs, MPI descriptions
-and `.db` worlds should work unchanged — with four deliberate departures: Go
+A Go reimplementation of [Fuzzball MUCK](https://www.fuzzball.org/) 7 — a
+port rather than a clean-room rewrite: no C is copied, but the C is read,
+which the rest of this file insists on. Aiming for behaviour compatibility
+— existing MUF programs, MPI descriptions and `.db` worlds should work
+unchanged — with four deliberate departures: Go
 instead of C, TLS-only networking, Postgres instead of flat-file dumps, and a
 rootless Podman container instead of autotools.
 

@@ -130,7 +130,7 @@ func TestWSSConnectAndLook(t *testing.T) {
 	url, cfg := startWSS(t)
 	c := dialWSS(t, url, cfg)
 
-	c.expect("Fuzzball Emerald")
+	c.expect("Emerald FB")
 
 	c.send("connect One potrzebie")
 	got := c.expect("Room Zero")

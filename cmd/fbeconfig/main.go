@@ -1,4 +1,4 @@
-// Command fbeconfig is Fuzzball Emerald's optional web configurator.
+// Command fbeconfig is Emerald FB's optional web configurator.
 //
 // It is a second binary against the same Postgres database and the
 // same FBE_* variables as the server, so a deployment that wants one

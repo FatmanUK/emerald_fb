@@ -1,4 +1,4 @@
-Fuzzball Emerald -- player command help
+Emerald FB -- player command help
 
 Type "help <topic>" for detail on any of these.
 
