@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/version"
 )
 
 func TestTableIsPopulated(t *testing.T) {
@@ -296,5 +297,79 @@ func TestAgainstRealDumpHeader(t *testing.T) {
 	// default marker: default_room_parent and player_start.
 	if s.IsDefault("default_room_parent") {
 		t.Error("default_room_parent is set explicitly in the fixture")
+	}
+}
+
+// TestActiveIsModEnabled pins MOD_ENABLED, which nothing tested: the
+// "[inactive]" marker has no golden case, because the golden @tune
+// script never lists the whole table -- Emerald's table is not
+// upstream's, so only a pattern selecting parameters both servers
+// carry can agree, and none of those is module-gated.
+//
+// Five of the 161 parameters carry a Module, and this is every one.
+func TestActiveIsModEnabled(t *testing.T) {
+	want := map[string]bool{
+		// MCPGUI is in the string, so MCP is active -- which
+		// is the whole reason this is a substring test and
+		// not a set lookup.
+		"mcp_muf_mlev": true,
+		// DISKBASE is replaced by Postgres.
+		"diskbase_propvals": false,
+		"max_loaded_objs":   false,
+		// MEMPROF is C malloc profiling.
+		"file_log_malloc": false,
+		// RESOLVER is upstream's separate resolver process.
+		// Emerald resolves names on its own goroutines, which
+		// is upstream's #ifndef branch -- the parameter is
+		// still read there, so this marker says "no resolver
+		// process", not "no DNS".
+		"use_hostnames": false,
+	}
+	seen := 0
+	for i := range params {
+		p := &params[i]
+		if p.Module == "" {
+			if !p.Active() {
+				t.Errorf("%q has no module and is "+
+					"inactive", p.Name)
+			}
+			continue
+		}
+		seen++
+		w, ok := want[p.Name]
+		if !ok {
+			t.Errorf("%q is gated on module %q and "+
+				"this test does not know it",
+				p.Name, p.Module)
+			continue
+		}
+		if p.Active() != w {
+			t.Errorf("%q (module %q) Active() = %v, "+
+				"want %v", p.Name, p.Module,
+				p.Active(), w)
+		}
+	}
+	if seen != len(want) {
+		t.Errorf("%d module-gated parameters, want %d",
+			seen, len(want))
+	}
+}
+
+// TestMCPResolvesThroughMCPGUI is the point of the previous test
+// stated on its own, because it is the one thing a set lookup would
+// get wrong and the one thing a reader will not believe.
+//
+// Upstream's token is "MCP" and compile_options never contains it
+// alone -- only inside "MCPGUI ". MOD_ENABLED (game.h:30) is strstr,
+// so "MCP" matches; a map[string]bool of exact names would not.
+func TestMCPResolvesThroughMCPGUI(t *testing.T) {
+	if strings.Contains(version.CompileOptions, "MCP ") {
+		t.Fatal("CompileOptions has a bare MCP " +
+			"token, so this test proves nothing")
+	}
+	p := &Param{Module: "MCP"}
+	if !p.Active() {
+		t.Error("MCP is inactive, so the substring " +
+			"test is gone")
 	}
 }

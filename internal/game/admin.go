@@ -11,6 +11,7 @@ import (
 	"github.com/FatmanUK/emerald_fb/internal/match"
 	"github.com/FatmanUK/emerald_fb/internal/ref"
 	"github.com/FatmanUK/emerald_fb/internal/tune"
+	"github.com/FatmanUK/emerald_fb/internal/version"
 	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
@@ -32,9 +33,21 @@ func (s *Server) cmdQuit(c *ctx) {
 	c.d.Close()
 }
 
-// cmdVersion reports the server version.
+// cmdVersion is do_version (help.c:587), which prints *two* lines
+// where this printed one: the VERSION constant and the
+// compile_options string, each with its own prefix. A third line
+// names this server, because the first two deliberately do not --
+// they are what a program reads, and they say Fuzzball because
+// Fuzzball is what a program may expect of them.
+//
+// Upstream's "%s" emits compile_options' trailing space and so does
+// this. No transcript can see it, since the golden harness
+// right-trims every line, but the byte upstream sends is the byte to
+// send.
 func (s *Server) cmdVersion(c *ctx) {
-	c.tell("Fuzzball Emerald %s", Version)
+	c.tell("Version: %s", version.Muck)
+	c.tell("Options: %s", version.CompileOptions)
+	c.tell("Emerald FB %s", Version)
 }
 
 // cmdDump forces the world to be written now.

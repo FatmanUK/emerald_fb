@@ -71,7 +71,10 @@ type Options struct {
 	CanCall func(target, function string) (bool, bool)
 
 	// MuckName and Version fill the __muckname and __version
-	// built-ins, whose values come from the running server.
+	// built-ins. MuckName comes from the running server; Version
+	// is the VERSION constant, which is what insert_def installs
+	// (compile.c:707) -- not the build version, which a program
+	// compiled against a define could not usefully branch on.
 	MuckName string
 	Version  string
 
@@ -228,15 +231,44 @@ func (c *compiler) init() error {
 			return err
 		}
 	}
-	// These two are literals in the C, built from server values.
-	if c.opts.Version != "" {
-		if err := install("__version", strconv.Quote(c.opts.Version)); err != nil {
-			return err
+	// These two come from the server, and upstream installs them
+	// **unquoted** (compile.c:707-708) where every other built-in
+	// that produces a string spells the quotes out: compile.c:721
+	// builds the "desc" define by concatenating a literal quote
+	// on each side of the property name.
+	//
+	// That is not an oversight and quoting them is wrong. Their
+	// documented use is a *textual* comparison in a directive,
+	// "$ifdef __version>Muck2.2fb3.5" (docs/man.txt:817) and
+	// "$ifdef __muckname=FurryMUCK" (:640), which compares the
+	// definition's body as it stands. A quoted body puts a '"'
+	// (0x22) in front of every comparison, and '"' sorts below
+	// every letter and digit -- so a quoted __version is "less
+	// than" every version string ever written, and a world gated
+	// on being newer than some release silently takes the older
+	// branch.
+	//
+	// The cost is that expanding either one as a *value* is a
+	// compile error, upstream's "Unrecognized word" on a bare
+	// Muck2.2fb7.21. That is also upstream's behaviour, and a
+	// world cannot be relying on Emerald's looser form, since
+	// using it that way has never compiled anywhere else.
+	//
+	// A lex failure here is a note rather than an error, because
+	// a muckname is a world's free text: upstream's insert_def
+	// validates nothing, and one odd character in muckname must
+	// not stop every program in the world from compiling.
+	for _, d := range [...]struct{ name, body string }{
+		{"__version", c.opts.Version},
+		{"__muckname", c.opts.MuckName},
+	} {
+		if d.body == "" {
+			continue
 		}
-	}
-	if c.opts.MuckName != "" {
-		if err := install("__muckname", strconv.Quote(c.opts.MuckName)); err != nil {
-			return err
+		if err := install(d.name, d.body); err != nil {
+			c.notes = append(c.notes,
+				"ignoring the built-in definition "+
+					d.name+": "+err.Error())
 		}
 	}
 	for name, body := range c.opts.Defines {

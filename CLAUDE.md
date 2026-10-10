@@ -750,12 +750,19 @@ program knows it has the lot.
 
 **`[inactive]` is upstream's marker for a parameter whose feature was compiled
 out**, `MOD_ENABLED` against the `compile_options` string. `tune.Param.Active`
-is that test, and `tune.modules` is Emerald's own list: MCP and nothing else,
-since DISKBASE is replaced by Postgres, MEMPROF is malloc profiling and
-RESOLVER is upstream's separate resolver process. Emerald's **inert**
-parameters — the `dump_*` family and the `file_*` names — are deliberately
-*not* marked, because upstream does not mark its equivalents; `fbemerald tune`
-and the configurator are where that is said.
+is that test, and the string is `version.CompileOptions` —
+`"GODPRIV MCPGUI SSL "`, three of upstream's nine, since DISKBASE is replaced
+by Postgres, MEMPROF is malloc profiling, and RESOLVER is upstream's separate
+resolver process where Emerald resolves names on its own goroutines.
+**`MOD_ENABLED` is a substring test** (`game.h:30`), not a set lookup, and
+that is load-bearing rather than incidental: upstream's token for the MCP
+parameters is `"MCP"` and the string never contains it alone, only inside
+`"MCPGUI "`. Emerald's **inert** parameters — the `dump_*` family and the
+`file_*` names — are deliberately *not* marked, because upstream does not
+mark its equivalents; `fbemerald tune` and the configurator are where that is
+said. Five of the 161 parameters carry a `Module` at all, and
+`TestActiveIsModEnabled` names every one — there is no golden case, because
+the golden `@tune` script never lists the whole table.
 
 **A `@tune` cannot be forced**, which is the only permission check `do_tune`
 makes for itself and is not about who is asking.
@@ -1144,6 +1151,29 @@ program run by its own owner. `GUI_CTRL_COMMAND`, `GUI_AVAILABLE` and
 `MCP_SUPPORTS` are not gated, which is also upstream's.
 
 ## Traps
+
+**Four surfaces answer "what version is this" and upstream answers all four
+with one constant.** MUF `VERSION` (`p_stack.c:817`), MPI `{version}`
+(`mfuns.c:129`), the compiler's `__version` define (`compile.c:707`) and
+`@version`'s first line (`help.c:587`) each return `VERSION`, which is
+`"Muck2.2fb7.21"` (`config.h:24`). `internal/version.Muck` is that constant
+and all four read it, so they agree by construction; `game.Version` is
+Emerald's own build string and is a different thing, printed on `@version`'s
+third line. Emerald had answered the question three ways at once, and
+nothing compared any of them — `internal/golden/version_test.go` is the case
+that did not exist.
+
+**`__version` and `__muckname` are installed *unquoted*, and quoting them is
+a silent bug.** `insert_def(cstat, "__version", VERSION)` stores the bare
+text where every other string-producing built-in spells its quotes out, and
+that is right: the documented use is a *textual* comparison in a directive,
+`$ifdef __version>Muck2.2fb3.5` (`docs/man.txt:817`). A quoted body puts a
+`"` (0x22) in front of the comparison, and `"` sorts below every letter and
+digit — so a quoted `__version` is "less than" every version string anyone
+would compare against, and a world gated on being newer than some release
+takes the older branch on every build. The cost of being faithful is that
+expanding either one as a *value* is a compile error, which is also
+upstream's behaviour.
 
 **A MUF program starts with one value on its stack**: the command's argument,
 which `interp()` pushes before the program runs. `depth` counts it. And unset

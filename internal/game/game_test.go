@@ -11,6 +11,7 @@ import (
 	"github.com/FatmanUK/emerald_fb/internal/props"
 	"github.com/FatmanUK/emerald_fb/internal/ref"
 	"github.com/FatmanUK/emerald_fb/internal/session"
+	"github.com/FatmanUK/emerald_fb/internal/version"
 	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
@@ -385,8 +386,19 @@ func TestAtCommandPrefixMatching(t *testing.T) {
 
 	// An unambiguous prefix reaches its command.
 	h.send("@vers")
-	if got := h.out(); !strings.Contains(got, "Fuzzball Emerald") {
-		t.Errorf("@vers = %q, want the version", got)
+	// Three lines: upstream's two, then this server's own name.
+	// The first two are what a program reads, so they are
+	// upstream's constants and not a product name.
+	got := h.out()
+	for _, want := range []string{
+		"Version: " + version.Muck,
+		"Options: " + version.CompileOptions,
+		"Emerald FB ",
+	} {
+		if !strings.Contains(got, want) {
+			t.Errorf("@vers = %q, want %q in it",
+				got, want)
+		}
 	}
 
 	// An ambiguous prefix matches nothing rather than picking

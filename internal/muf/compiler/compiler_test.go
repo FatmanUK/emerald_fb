@@ -389,3 +389,54 @@ func TestTryCatch(t *testing.T) {
 		t.Errorf("got %d try instructions, want 1", trys)
 	}
 }
+
+// TestServerDefinesAreUnquoted pins compile.c:707-708, which installs
+// __version and __muckname with no quotes where every other built-in
+// producing a string spells them out. This server quoted them, which
+// looked harmless and broke the one use the manual documents.
+//
+// A quoted body puts '"' (0x22) in front of the comparison, and '"'
+// sorts below every letter and digit -- so a quoted __version is
+// "less than" every version string anyone would compare against, and
+// "$ifdef __version>Muck2.2fb3.5" (docs/man.txt:817) took the older
+// branch on every release.
+func TestServerDefinesAreUnquoted(t *testing.T) {
+	opts := Options{Version: "Muck2.2fb7.21", MuckName: "Emerald"}
+
+	// The comparison the manual shows: newer than an older
+	// release, and not newer than a later one.
+	for _, c := range []struct {
+		cond string
+		want int64
+	}{
+		{"__version>Muck2.2fb3.5", 111},
+		{"__version>Muck2.2fb9.9", 222},
+		{"__version=Muck2.2fb7.21", 111},
+		{"__muckname=Emerald", 111},
+		{"__muckname=FurryMUCK", 222},
+	} {
+		src := ": main $ifdef " + c.cond +
+			" 111 $else 222 $endif pop ;"
+		p, err := Compile(src, opts)
+		if err != nil {
+			t.Fatalf("compiling %q: %v", src, err)
+		}
+		other := int64(333) - c.want
+		for _, in := range p.Code {
+			if in.Type == muf.TypeInteger &&
+				in.Num == other {
+				t.Errorf("%q took the wrong branch",
+					c.cond)
+			}
+		}
+	}
+
+	// And the cost of being faithful: expanding either one as a
+	// value is upstream's "Unrecognized word" on a bare
+	// Muck2.2fb7.21, because the body is not a literal.
+	if _, err := Compile(": main __version pop ;",
+		opts); err == nil {
+		t.Error("__version expanded as a value, " +
+			"so it is quoted")
+	}
+}

@@ -13,6 +13,7 @@ import (
 	"github.com/FatmanUK/emerald_fb/internal/password"
 	"github.com/FatmanUK/emerald_fb/internal/props"
 	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/version"
 	"github.com/FatmanUK/emerald_fb/internal/world"
 )
 
@@ -618,8 +619,12 @@ func (h *mufHost) Uptime() time.Duration {
 	return h.w.Now().Sub(h.s.started)
 }
 
+// Version is what MUF VERSION pushes: prim_version (p_stack.c:817)
+// pushes the VERSION constant, the same one MPI's {version} returns.
+// It used to be the product name and the build version, which is a
+// third answer to a question upstream gives one answer to.
 func (h *mufHost) Version() string {
-	return "Fuzzball Emerald " + Version
+	return version.Muck
 }
 
 // compiled caches a program's compiled form, keyed by ref.
@@ -696,7 +701,7 @@ func (s *Server) compileSource(w *world.World, r ref.Ref,
 		ObjVersion:     s.objVersionFor(w, r),
 		CanCall:        s.canCallFor(w, r),
 		MuckName:       w.Tune.String("muckname"),
-		Version:        Version,
+		Version:        version.Muck,
 		CommentsStrict: w.Tune.Bool("muf_comments_strict"),
 	})
 	if err != nil {

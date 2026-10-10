@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/FatmanUK/emerald_fb/internal/ascii"
+	"github.com/FatmanUK/emerald_fb/internal/version"
 )
 
 // impl is one MPI function's implementation.
@@ -392,8 +393,11 @@ func init() {
 		return time.Unix(int64(n), 0).UTC().Format("Mon Jan 02 15:04:05 2006"), nil
 	})
 
+	// mfn_version (mfuns.c:129) returns VERSION, and so does MUF
+	// VERSION -- the two agreed here by coincidence until
+	// internal/version made them agree by construction.
 	register("VERSION", func(*Env, *Func, []string) (string, error) {
-		return "Muck2.2fb7.21", nil
+		return version.Muck, nil
 	})
 }
 

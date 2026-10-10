@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/FatmanUK/emerald_fb/internal/ref"
+	"github.com/FatmanUK/emerald_fb/internal/version"
 )
 
 // Type is a parameter's value type.
@@ -68,27 +69,27 @@ func (t Type) Tag() string {
 	}
 }
 
-// modules names the optional subsystems this server has, which is
-// upstream's compile_options string (game.c:66). A parameter whose
-// Module is not in it does nothing here, and a listing marks it
-// "[inactive]" — upstream's own word for a parameter that is
-// present because MUF looks parameters up by name, but whose feature
-// was compiled out.
+// Active reports whether this server acts on a parameter at all. A
+// parameter whose Module is compiled out does nothing here, and a
+// listing marks it "[inactive]" — upstream's own word for a
+// parameter that is present because MUF looks parameters up by name,
+// but whose feature is not in the build.
 //
-// Emerald has MCP and nothing else on that list: DISKBASE is replaced
-// by Postgres, MEMPROF is malloc profiling, and RESOLVER is
-// upstream's separate resolver process where Emerald resolves names
-// on its own goroutines.
-var modules = map[string]bool{"MCP": true}
-
-// Active reports whether this server acts on a parameter at all.
+// It is MOD_ENABLED (game.h:30) and nothing more, which means it is a
+// **substring** test against version.CompileOptions rather than a set
+// lookup. That is not incidental: upstream's token for the MCP
+// parameters is "MCP" and the string never contains it on its own,
+// only inside "MCPGUI ". A set of exact names answers the same four
+// questions today and would answer the wrong one the moment upstream
+// added a token that is a prefix of another.
 //
-// It is MOD_ENABLED (game.h:30) and nothing more. Emerald's own Inert
-// set — the dump_* family and the file_* names — is deliberately
-// not folded in: upstream prints no marker for those, `fbemerald
-// tune` marks them, and the configurator explains them.
+// Emerald's own Inert set — the dump_* family and the file_* names
+// — is deliberately not folded in: upstream prints no marker for
+// those, `fbemerald tune` marks them, and the configurator explains
+// them.
 func (p *Param) Active() bool {
-	return p.Module == "" || modules[p.Module]
+	return p.Module == "" ||
+		strings.Contains(version.CompileOptions, p.Module)
 }
 
 // SetResult is tune_setparm's answer (tune.c:402). Every one of the
