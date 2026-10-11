@@ -106,10 +106,13 @@ func (s *Server) cmdUncompile(c *ctx) {
 // applied at the dispatch site, which for Emerald means the perm
 // flags on commandTable.
 //
-// One thing is deliberately not reproduced. Upstream loops over
-// descriptors and calls notify_listeners, which itself writes to
-// every descriptor that player has — so somebody connected twice
-// receives the shout four times. This writes to each descriptor once.
+// Upstream's per-descriptor arithmetic **is** reproduced, and this
+// comment used to say the opposite while the one inside the function
+// said it was: upstream loops over descriptors and calls
+// notify_listeners, which itself writes to every descriptor that
+// player has, so somebody connected twice receives the shout four
+// times. internal/golden/trio_test.go is what can see it, and a third
+// seat is what it needed.
 func (s *Server) cmdWall(c *ctx) {
 	// full_command, not the trimmed argument: do_wall prints what
 	// was typed.

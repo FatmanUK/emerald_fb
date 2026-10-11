@@ -30,13 +30,15 @@ const instrLimitSource = `: ts[ s -- ] me @ s @ notify ;
   "finished the loop" ts
 ;`
 
-// Three copies of the same program, because a mucker level only takes
-// effect on a program's **first** run here: the level is baked into
-// the cached compile and @set does not invalidate it, where upstream
-// reads ProgMLevel afresh inside interp_loop (interp.c:1706). That is
-// recorded in docs/upstream-coverage.md as its own gap; this case
-// works around it by giving each level a program of its own, compiled
-// cold.
+// Three copies of the same program. That was once a workaround: a
+// mucker level took effect only on a program's first run here,
+// because the level was baked into the cached compile and @set did
+// not invalidate it, where upstream reads ProgMLevel afresh inside
+// interp_loop (interp.c:1706). **That gap is closed** -- muf.Frame
+// reads host.ProgMLevel per run -- so the three programs are no
+// longer needed to get three levels. They are kept because one
+// program per level is still the clearer fixture, and because
+// rewriting a passing case to use one earns nothing.
 var instrLimitPrograms = []Program{
 	{Name: "one", Source: instrLimitSource},
 	{Name: "two", Source: instrLimitSource},

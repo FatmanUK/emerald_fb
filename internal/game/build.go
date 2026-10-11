@@ -412,11 +412,11 @@ const exitDelimiter = ';'
 // below: an **unlinked** exit is linkable by anybody. The other two
 // test controls() themselves, and each names what it failed.
 //
-// Two things about @link are still divergent and are recorded in
-// docs/upstream-coverage.md rather than fixed here, because neither
-// is a permission refusal: resolveLinkTarget's matcher is not
-// parse_linkable_dest's, and @link cannot build a multi-destination
-// exit even though trigger() traverses one.
+// Both of the divergences this comment used to record are closed, and
+// leaving it saying otherwise cost a later audit three rounds of
+// disproving it: resolveLinkTarget's matcher is parse_linkable_dest's
+// now, and linkExitDests below splits a ';'-separated destination
+// list the way _link_exit does.
 func (s *Server) cmdLink(c *ctx) {
 	name, destName, _ := strings.Cut(c.arg, "=")
 	name = strings.TrimSpace(name)

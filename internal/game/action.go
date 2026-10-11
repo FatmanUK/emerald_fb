@@ -463,14 +463,11 @@ func (s *Server) blessProps(c *ctx, bless bool) {
 // A pattern ending in '/' gains a '*', so "_stuff/" means everything
 // directly under it.
 //
-// One thing upstream does is not reproduced: it also blesses
-// **directories**, which first_prop walks and Emerald's props.Tree
-// does not report because a directory carries no value. The effect is
-// confined to the count and to the marker examine prints, since
-// Prop_Blessed reads a path's own flags and a blessed directory does
-// not bless its children — but making it agree means a flag that
-// can live on a valueless node, which touches props, examine and the
-// store together. Recorded in docs/upstream-coverage.md.
+// Blessing a **directory** is reproduced now, which this comment used
+// to say it was not: props.Tree carries a node flag independent of a
+// value, so a valueless node can hold it. See the walk above, and
+// docs/upstream-coverage.md for the one thing upstream loses that
+// this keeps.
 func blessMatches(pattern, path string) bool {
 	if strings.HasSuffix(pattern, "/") {
 		pattern += "*"

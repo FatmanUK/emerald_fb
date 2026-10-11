@@ -3,3 +3,4 @@
 /deploy/tls/
 /fuzzball_emerald.geany
 /build/
+__pycache__/

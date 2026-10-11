@@ -150,8 +150,11 @@ func (h *mpiHost) Now() int64 { return h.w.Now().Unix() }
 
 // evalMPI evaluates a property's text for a viewer.
 //
-// Only text that actually contains a call is parsed, so an ordinary
-// description costs nothing and cannot be changed by a stray brace.
+// Every property is parsed, whether or not it holds a call. This
+// comment used to claim the opposite -- that only text containing a
+// call was parsed, so an ordinary description could not be changed by
+// a stray brace -- and evalMPIAs below explains at length why that
+// short-circuit was invented and had to go.
 func (s *Server) evalMPI(w *world.World, descr int,
 	viewer, what ref.Ref, text, how string, blessed bool,
 	kind mpi.MesgType) string {

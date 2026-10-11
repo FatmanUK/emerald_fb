@@ -250,9 +250,10 @@ func TestDeclinedCommandsSayWhy(t *testing.T) {
 // golden harness cannot reach: its player is #1, who controls
 // everything in the fixture.
 //
-// The commands still on resolveControlled keep the older, bare
-// message on purpose — see its doc comment for why each needs its
-// own commit rather than a shared string.
+// There are no commands "still on resolveControlled" any more, as
+// this comment used to say: all four were ported and the shared
+// helper went with them, so there is no doc comment to go and read.
+// Each of the four now applies its own rule and names what it failed.
 func TestMatchControlledWording(t *testing.T) {
 	h := newHarness(t)
 	h.login()
