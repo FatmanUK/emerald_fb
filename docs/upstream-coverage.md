@@ -2126,6 +2126,167 @@ both invisible to the oracle because its player is `#1`:
 
 ---
 
+### The MUF permission model was largely absent
+
+A privilege escalation, and a *systematic* one whose cause is written
+into the mucker table's own doc comment. `mlev_gen.go` records
+**unconditional** floors and deliberately skips a check written
+`(mlev < N) && !permissions(...)`, because that means "a wizard **or**
+the owner" and recording it as a floor would refuse the owner. That is
+correct — and the skipped half was meant to be hand-ported inside each
+primitive, which largely never happened. The measurement at the time:
+
+| | upstream `p_*.c` | here |
+|---|---|---|
+| `mlev <` tests | 122 | 26 recorded as floors |
+| `(mlev < N) && !permissions(...)` gates | 15 | ~1 |
+| `CHECKREMOTE` | 61 | 5 |
+| `prop_read_perms` / `prop_write_perms` | 19 / 12 | 0 |
+
+The headline was **MUF `SET`**: it popped a flag name, resolved the
+bit, ORed it in and called the host's setter, so a mucker-1 program
+could set WIZARD on any object. `prim_set` (`p_db.c:1001`) does four
+things first, and `valid_object` was missing as well as the three
+permission tests — **its absence was a panic**, because at mucker 4
+the ownership gate is skipped and a nonexistent ref fell all the way
+through to the setter.
+
+Three findings from that work are upstream's and are kept:
+
+- **MUF accepts `truewizard` where `@set` refuses it**, because
+  `prim_set` uses bare `str_to_flag`.
+- **`SET` ORs the mucker bits where `do_set` clears both and
+  assigns**, so MUF's version *adds* to a level where the command
+  *replaces* one.
+- The refusal is "Unrecognized flag.", not a description.
+
+`unable_to_set_flag` is reached through one host method rather than
+reimplemented, because two ports of one rule is the mistake this
+document records for `can_link_to`/`can_teleport_to`.
+
+**The order the nine commits ran in was dependency, not severity.**
+`SET` is the worst thing in the group and went third, because it needs
+`permissions()`, which needs `controls` settled — and the fifty-odd
+`CHECKREMOTE` sites added afterwards all inherit whatever answer
+`controls` gives. Severity-first would have meant editing the same
+primitives twice.
+
+**And `permissions()` was never absent.** The audit that opened this
+work reported it missing because upstream calls it 32 times and this
+server a handful; it was ported, faithful to `interp.c:2706` branch
+for branch, and used at 13 sites. **A count of C call sites is not a
+measure of whether the predicate behind them exists** — what the 19
+missing sites needed was call sites, not a function.
+
+### The property permission layer, and four shapes it takes
+
+`prop_read_perms` (`p_props.c:87`) and `prop_write_perms` (`:129`)
+were ported nowhere, so `Prop_System`, `Prop_Private`, `Prop_Hidden`,
+`Prop_ReadOnly`, `Prop_SeeOnly`, the `tp_gender_prop` guard and the
+MPI-macros propdir refusal were absent across seventeen primitives.
+They are in now, and the family does not have one shape:
+
+- **The single-gate primitives** — `GETPROP`, `GETPROPVAL`,
+  `GETPROPFVAL`, `SETPROP`, `ADDPROP`, `REMOVE_PROP`, `PROPDIR?`,
+  `BLESSPROP`, `UNBLESSPROP`, `BLESSED?` and the REFLIST trio — each
+  with its own `CHECKREMOTE`. **`GETPROPSTR` has none at all**
+  (`p_props.c:387-401`), alone among the four getters, so the shared
+  helper had to be **split** rather than guarded wholesale.
+- **`NEXTPROP` skips rather than refuses**, looping
+  `while (pname && !prop_read_perms(...))` (`:1100`), and has no
+  `CHECKREMOTE`. Its names are also **rooted** — `/plainonly`, not
+  `plainonly` — which they were not.
+- **`ENVPROP` and `ENVPROPSTR` test the object the walk landed on**,
+  after the walk, with the **untrimmed** name, and `CHECKREMOTE` only
+  the object they started from.
+- **`p_array.c` skips where `p_props.c` aborts.** `ARRAY_GET_PROPDIRS`,
+  `PROPVALS`, `PROPLIST`, `REFLIST` and `ARRAY_FILTER_PROP` drop an
+  unreadable property from the result; the plain getters refuse. The
+  `ARRAY_PUT_PROP*` half aborts, with its own longer message.
+
+The `Prop_*` classifiers moved to `internal/props` on the way, which
+collapsed **four** copies — two drifted from the C in opposite
+directions, one case-insensitive where `is_prop_prefix`
+(`fbstrings.c:1152`) compares bytes, one doing no leading-`/` trim.
+An eighth copy turned up later in MPI's macro path.
+
+**Two `ARRAY_GET_PROP*` reading divergences** came out of gating that
+family. `ARRAY_GET_PROPVALS` counted a **valueless directory** as an
+entry where upstream counts only value-bearing children
+(`p_array.c:1798`), so two bare propdirs answered 2 here and 0 there.
+And `ARRAY_GET_PROPLIST` read only `dir#/N` where upstream falls back
+to `dir#N` as well (`:2018`), so a world using the flat spelling read
+an empty list — a proplist has **six** spellings upstream and had one
+here. `max_propfetch` capped nothing.
+
+### MPI had no property safety layer and no locality test
+
+`safegetprop_strict` (`msgparse.c:165`), `safegetprop` and
+`safeputprop` were not ported, and `Env.resolve` had **one** failure
+path where upstream has **three** wrappers around `mesg_dbref_raw`
+with different permission rules and a second failure value. So
+`{loc}`, `{tell}`, `{otell}`, `{flags}`, `{contains}`, `{holds}` and
+`{pronouns}` had no locality test at all.
+
+Both halves are closed, and each turned up something adjacent:
+
+- **The macro lookup's middle step is a walk with an ownership
+  restriction**, not a flat read (`msgparse.c:293-300`).
+- **`PERMDENIED` is a distinct outcome from `UNKNOWN`** —
+  "Permission denied." against "Match failed." (`mfuns.c:164-168`) —
+  so a program can tell "not for you" from "no such object". Across
+  the 62 call sites each has its own wording: **four reverse "Match
+  failed." to "Failed match."** and **two spell "Permission Denied."
+  with a capital D.**
+- **`{exec}` ran its text with the caller's blessing**, which is
+  looser one way and dangerously stricter the other; and `mesg_parse`
+  **re-bases both objects**, which was not ported at all.
+- **Blessing has to be an out parameter.** `safegetprop_strict` sets
+  one from `Prop_Blessed`, and `safegetprop_limited` accepts a
+  differently-owned object's value when it is set — so `getProp` had
+  to start returning `(string, blessed bool)`, which touched its six
+  callers.
+
+Two mutations in that work survived until a **blessed** rung was added
+to the probe, because `@__sys__` is hidden *as well as* system and the
+two refusals answer alike.
+
+### Nine MPI functions that were not what they looked like
+
+Found by the resolver sweep and closed afterwards.
+
+- **`{awake}` answers a descriptor *count*, not a boolean** —
+  `PLAYER_DESCRCOUNT` (`mfuns2.c:1016`) — so two connections report
+  "2"; and a ZOMBIE thing is **redirected to its owner**, where this
+  read the thing.
+- **`{muf}` has a listener-and-lock floor**:
+  `(mesgtyp & (MPI_ISLISTENER|MPI_ISLOCK)) && MLevel(obj) < 3`
+  (`mfuns2.c:2671`), so without it a listener or a lock could run a
+  mucker-1 program.
+- **`{tell}` and `{otell}` each carry a dozen lines of prefixing
+  rules** built on `OWNER(what) == obj || isancestor(what, obj)`, and
+  **`isancestor` had no port**. Both notified the line as given.
+- **`{otell}` sends only its first line**, which is a bug in the C,
+  and both functions **return their message** rather than nothing.
+- **`{contents}` filters each item and this did not.** `mfn_contents`
+  (`mfuns2.c:401`) keeps an object only when the permissions object
+  controls the container, or controls the object, or the object is not
+  DARK and its location is not DARK and it is not a non-VEHICLE
+  program — and it drops a ROOM unless rooms were asked for. Filtering
+  on type alone listed a DARK thing in somebody else's room.
+- **`{nearby}`'s HOME branch is dead on both servers**, since
+  `mesg_dbref_raw` collapses HOME to UNKNOWN. Recorded so it does not
+  read as a gap.
+- **`{money}`'s floor is `pennies_muf_mlev`**, and
+  `addpennies_muf_mlev` and `movepennies_muf_mlev` have **no MPI
+  equivalent** to check. That is upstream's shape; nobody should add
+  one.
+- **The `@*lock` family agrees**, and the sweep's reading of it was
+  wrong twice over: `match_everything` *does* include `match_player`,
+  and a bare "Bob" resolves anyway because a newly created player is a
+  **neighbour**. A golden case holds the claim now.
+
+
 ## Is Emerald crash-only?
 
 **Partly, and deliberately not fully.**
