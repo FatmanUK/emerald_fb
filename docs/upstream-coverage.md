@@ -2287,6 +2287,168 @@ Found by the resolver sweep and closed afterwards.
   **neighbour**. A golden case holds the claim now.
 
 
+### What two seats could see, and a third
+
+The harness drove one connection, so no test could observe output
+addressed to **somebody else**. `internal/golden/duet.go` takes any
+number of seats now, and the first thing it found was that **`page`
+and `whisper` were wrong in nearly every line**: HAVEN, `lookup_cost`,
+the room named in the message, "Your message has been sent.", the
+spelling of a failed name, whisper's missing type check and its match
+list — and both commands deciding "not connected" from whether
+anybody actually **heard**, rather than from connection state.
+
+`@wall` needed a **third** seat, which is a second connection for a
+player who already has one. Nothing else can observe per-descriptor
+delivery: a shout reaches three descriptors, so a doubly-connected
+player hears it twice, once on each. That also settled a contradiction
+in this server's own comments about whether upstream's nested
+`notify_listeners` delivers a shout more than once. `@wall`'s ignore
+filter is **dead for a wizard shouter**, so it cannot be observed at
+all.
+
+**Which parts of a connection are first-only was recorded backwards**,
+here and in `CLAUDE.md`. The "has connected." line is gated on DARK
+alone and fires on **every** connection; the `connect` **action** and
+the puppets waking are what wait for the first, which upstream's own
+comment calls odd. `announce_puppets`, the DARK gate and the
+`connect`/`disconnect` exits had no port at all. Two more rules came
+with it: **a command's replies go to every connection a player has**,
+and the arrival look belongs **inside** `announce_connect`.
+
+### MCP: three orderings that look like improvements
+
+- **`@mcpedit`'s fallback to the line editor comes first**, before any
+  permission test, so a refusal is only ever an MCP error on a client
+  that could have been sent the text.
+- **`installPackageHandlers` runs after the default loop**, because
+  `MCP_BIND` cannot reach a built-in name (`p_mcp.c:519`).
+- **`mccppkg_simpleedit` is registered for the output-only notify
+  package**, so that handler can never match a message name.
+  Reproduced; otherwise it reads as a bug to fix.
+
+Two storage rules fell out of it: a `prop` string-list is **one
+property** rather than a list, and an empty line is stored as **a
+space** in both `proplist` and `prog`, because an empty value removes
+the property.
+
+### The `@tune` parameters nothing read
+
+**161 parameters, 70 unread** when the sweep began, of which 26 were
+real gaps with no decision recorded anywhere. **Seven of those
+defaulted `true` and were ignored**, so a fresh world diverged with no
+configuration at all: `who_hides_dark`, `idleboot`, `7bit_thing_names`,
+`tab_input_replaced_with_space`, `log_commands`,
+`expanded_debug_trace`, `ieee_bounds_handling`. That set the order.
+Three others — `enable_prefix`, `m3_huh`, `cmd_only_overrides` —
+default `false`, so hardcoding the false branch is **right at the
+default** and diverges only for a world that opts in; that is a
+reusable triage rule, and they were the cheapest to defer.
+
+**Idle handling had no descriptor sweep at all**, so connections were
+never reaped and no keepalive was sent. Three findings about upstream's
+version are not what its names suggest: `last_pinged_at` is an
+**output** clock rather than a ping clock, so a chatty room never
+pings; a non-telnet keepalive is a **zero-byte write** and sends
+nothing; and the login screen's 300-second timeout is hardcoded and
+reads `connected_at`, which upstream stamps at **accept** where
+Emerald's `ConnectedAt` is login — a field name that means something
+different in each server.
+
+**Name validation.** `ok_player_name`'s four character exceptions are
+**dead code**, because a player name can never hold a high byte —
+which is why there is no `7bit_player_names`. `create_player` has
+exactly two refusals and all four callers print them, where this
+server had five of its own invention. `ok_password` is
+printable-and-non-space throughout. And `do_name`'s else arm was
+missing outright, so **anything but a player could be renamed to
+anything at all.**
+
+**`internal/ascii.SMatch` had no test**, and `smatch` turned out wrong
+in **fourteen of forty-eight** cases: `{a|b}` was an alternation where
+upstream's is a *word* pattern, `{^a|b}` was not inverted, and `[a-z]`
+classes did not exist. A core helper with no test is this project's
+headline hazard; it was named in the architecture notes with no hint
+that it disagreed with the C.
+
+**WHO, QUIT and the input line.** `WHO`'s count sits **between** the
+`who_hides_dark` test and the name filter, so a filtered name is still
+counted. Only God sees the host's second half, which is the peer
+**port** and not a user name. WHO raises the high-water mark itself.
+`time_format_1`'s day count **wraps at a year**, because it is
+`gmtime`'s `tm_yday`. `goodbye_user` fires only on `booted == 2`, which
+only QUIT sets. And `isinput` is `isprint(q & 127)` — the byte masked
+for the test and stored **unmasked**, which is the mechanism that lets
+a high byte into a name at all, and so what ties the `7bit_*` family
+together.
+
+**The dispatcher's head.** `enable_prefix` decides **where** the
+shortcuts expand, not whether. The override token is tested *after* the
+expansion, so `!"hello` is a command word nothing answers. `command++`
+skips the token and not the space. The third shortcut `;` expands to
+**a command that does not exist**. `cmd_only_overrides` turns every
+built-in off **including `@tune`**, which is an operational trap: a
+world can lock itself out. And `m3_huh`'s exit is matched at priority 3
+on the command *word*.
+
+**`ieee_bounds_handling` was twenty-six sites** across `p_float.c` and
+`p_math.c`, and the C is inconsistent with itself in ways worth
+knowing: SIN/COS do not tell a NaN from an infinity where four others
+do; EXP raises NAN on **success**; LOG of zero is *imaginary*; `%`
+refuses a float; and the ieee arm **recomputes**, so `0.0 0.0 /` is a
+*negative* NaN. MODF pushed its halves the wrong way round here. C and
+Go spell nan/inf differently and FTOSTRC appends a ".0"; STRTOF's
+`ifloat` demands a decimal point. The five error-flag primitives have
+**three** different argument rules, and `SET_ERROR`/`CLEAR_ERROR` push
+a result this server did not.
+
+**Integer `IBOUNDS` is deliberately not ported**: `arith_good`
+(`fbmath.c:54`) bounds at `INT_MAX`/`INT_MIN` and Emerald's integers
+are int64, so porting it would raise the flag for arithmetic this
+server performs correctly.
+
+**`expanded_debug_trace`** renders an array as `N{k:v ...}` cut at
+**eight** items with a `_`, its own items unexpanded. Probing it needs a
+**backtrace** rather than a trace, because a trace cannot be compared
+line for line — and that probe found a **second** value renderer,
+`Value.Display`, spelling an array `<array 3>` and cutting a string
+without the marker. Two renderers that must agree.
+
+**`mpi_max_commands` was set by none of the seven `Env` literals**,
+which is a pattern worth naming: a parameter can be inert because every
+construction site omits it rather than because nothing reads it. Its
+refusal names the **table's** function name for an ordinary call and
+the typed one for a `{&var}`.
+
+**`dequeue_prog(player, 2)`.** A disconnect never swept foreground
+programs at all, and `@Q` swept only the process *reading* that
+descriptor rather than the player's. A background process is spared; a
+queued MPI event is spared only when `mpi_continue_after_logout` is
+set, which it is not by default; and the sweep runs only on the
+**last** descriptor, which is why its "Foreground program aborted."
+line can reach nobody.
+
+**The logging policy.** The command gate is `log_commands` **or** an
+unquelled wizard. The password mask is three masks applied to the whole
+line, and `@pcreate` keeps the player's **name**. `log_failed_commands`
+is **not** gated on `log_commands`, and records a typo only where the
+player does **not** control the room. `cmd_log_threshold_msec` is
+*greater than*, so zero logs everything. `log_program_text` had no
+caller and has three save paths. And `whowhere` was not ported at all.
+
+**One upstream bug found there and deliberately not reproduced**:
+`log_program_text` contains an **infinite loop** for a line with no
+text — `log.c:304-311` is
+`while (first) { if (!first->this_line) continue; ...
+first = first->next; }`, where the `continue` skips the advance. A
+faithful re-port would hang the server inside a program save.
+
+**`optimize_muf` stays unbuilt**, and the consequence is worth
+recording beyond the decline: this compiler has no peephole optimizer,
+**so instruction counts differ from upstream**. Any future comparison
+of instruction limits rests on that.
+
+
 ## Is Emerald crash-only?
 
 **Partly, and deliberately not fully.**
