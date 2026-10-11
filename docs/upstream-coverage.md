@@ -2287,6 +2287,51 @@ Found by the resolver sweep and closed afterwards.
   **neighbour**. A golden case holds the claim now.
 
 
+### `match_player` wants a star, and the matcher charges money
+
+`match_player` (`match.c:393`) matches **only** a name written with a
+leading `*`. Without that stage reading the star, eight commands
+across three transcribed scripts tripped over the same thing: a
+wizard naming somebody by `*Bob` resolved nothing.
+
+Two things came with it. **`lookup_cost` had no reader** — upstream
+charges a player for a name lookup, and nothing here did. And
+charging from inside the matcher meant `payfor` had to move into
+`internal/world`, because `internal/match` cannot reach the game.
+
+`penny_rate` is the hazard that comes out of both: it hands out
+pennies at random on movement, so **any golden fixture that moves
+somebody and then counts anything is flaky by construction** — a
+balance, an object count, a `@stats` line.
+
+### Two orderings in `p_db.c`, one of which crashes the C
+
+**`EXITS_ARRAY` tests permission before validity, and that order
+crashes upstream.** `p_db.c:3428-3436` is `CHECKOP(1)`, then
+`(mlev < 3) && !permissions(ProgUID, oper1->data.objref)`, and only
+*then* `valid_object(oper1)`. So the permission test reads
+`data.objref` off an operand that has not been checked to be an object
+and hands it to `permissions()`, which indexes the database with it —
+an out-of-range dbref at mucker 1 takes the C server down. That is how
+the ordering was found.
+
+It is worth stating beyond the one primitive, because it is the same
+argument a dispatcher-side mucker gate rests on: **upstream's `mlev`
+guard is not always upstream's first refusal.** `prim_recycle`
+(`p_db.c:2194`) aborts "Invalid object (1)." before its gate, and
+`prim_nextowned` (`:571`) aborts "Invalid object." before its own — so
+a refusal moved earlier than upstream puts it answers the wrong
+message for a bad argument.
+
+**And `NEXTOWNED` restarts at dbref 0 for a player.** `p_db.c:584-588`
+is `if (Typeof(ref) == TYPE_PLAYER) ref = 0; else ref++;` — so asked
+for the first thing a *player* owns, upstream scans the whole database
+from the bottom, while asked about any other object it continues from
+`obj + 1`. This server did `obj + 1` in both cases and therefore
+**skipped everything below the player's own dbref**: a real bug rather
+than a message, and invisible in any fixture where the player happens
+to be `#1`.
+
 ### What two seats could see, and a third
 
 The harness drove one connection, so no test could observe output
