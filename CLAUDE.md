@@ -310,6 +310,95 @@ DESCRHOST or DESCRUSER ever compared. **A golden case that aborts identically
 on both servers passes while testing nothing**, so when a case exists to
 exercise a primitive, check that the primitive actually ran.
 
+### Four things the harness cannot see, and one it can
+
+These are limits of the instrument, not of the server, and each one has made
+a probe pass while measuring nothing.
+
+- **It cannot see trailing whitespace.** `Normalize` (`compare.go:20`)
+  right-trims every line before comparing, so a case about intake trimming
+  has to **bracket** the value — `"[" swap strcat "]" strcat`, the
+  `setprop_test.go` idiom — or turn on a message that puts something after
+  it. Writing the obvious probe and watching it pass proves nothing.
+- **It cannot be built on `compareWalkthrough` and also exercise a program.**
+  That helper hardcodes its fixture as `": main 1 pop ;"`
+  (`walkthrough_test.go:460`), so a script of its own that includes a `test`
+  step runs a program which prints nothing. Build the fixture explicitly when
+  the case has MUF in it.
+- **It cannot count anything in a fixture that also moves somebody.**
+  `penny_rate` gives pennies out at random on movement, so a case that walks
+  a player and then reads a balance, an object count or a `@stats` line is
+  flaky by construction.
+- **It cannot pin a name that matches two objects**, because `choose_thing`
+  tosses a coin (`match.c:175`). Those five tie-breaks are unit-tested
+  instead.
+
+What it *can* do, and the technique to reach for first: **a MUF abort is
+catchable**, so `0 try <the call> catch <print it> endcatch` turns every
+refusal a primitive can make into one transcript line and lets the compiled C
+decide the wording. `checkargs_test.go` is 240-odd comparisons on that route.
+
+The game-side harness clock is **movable** — `harness.advance`
+(`internal/game/game_test.go:124`) — which anything testing a tick rule
+needs, since the engine's tick runs at the flush interval.
+
+### The harness drives several seats
+
+`internal/golden/duet.go` takes any number of connections, which is the only
+way to observe output addressed to **somebody else** — `page`, `whisper`,
+`@wall`, the connect and disconnect announcements. The Emerald side is nearly
+free, since `gs.Connect` twice gives two descriptors with their own `Output()`
+channels; the oracle side is the work, and the design is the marker:
+
+- A pose is **room-public**, so each seat sees the other's marker. There are
+  two tokens, one per seat; the acting seat poses its own; `readTo` discards a
+  line containing **either**, so both streams stay clean and the scheme
+  survives the seats being in different rooms.
+- **A mortal seat cannot use the `!` prefix** — it requires `IsTrueWizard` —
+  so it poses plainly, which is safe only in a fixture with no trapping exit.
+- Each step now costs **four** command tokens rather than two, so
+  `@tune commands_per_time=1000` stops being optional.
+- **The third seat is a second connection for a player who already has one.**
+  That is the only thing that can observe per-descriptor delivery: `@wall`
+  reaches three descriptors, so a doubly-connected player hears a shout twice,
+  once on each. A command's replies go to **every** connection a player has.
+
+### More ways a test passes while testing nothing
+
+The headline case is above — a case that aborts identically on both servers.
+These are the others this project has actually been bitten by, which is the
+only reason they are worth listing:
+
+- **A probe at the wrong mucker level** aborts before the code under test.
+  `NEXTPROP`'s floor of 3 refuses at mucker 1, so a draft probing its
+  *skip loop* at 1 measured the floor instead.
+- **One item cannot distinguish "skip" from "abort".** A primitive that skips
+  unreadable property names looks identical to one that refuses when the
+  fixture has a single unreadable name. Two, with a readable one after, is
+  the minimum.
+- **Two refusals worded alike make a mutation invisible.** `@__sys__` is
+  hidden *and* system, and both refusals answer the same, so two mutations
+  survived until a **blessed** rung was added to tell them apart.
+- **A mutation that fails to compile tests nothing** — an unused import, or a
+  falsified condition that `vet` then calls unreachable code. Delete the
+  block; do not falsify the condition. And check the anchor is unique:
+  `prim_connects.go` holds `if f.MLevel() < 3 {` sixteen times.
+- **An MCP multiline argument must be declared** `content*: ""` or its
+  continuation lines reach the command parser as text. The save then lands
+  empty and the program compiles to "program has no procedures" — which looks
+  like a result rather than a failure.
+- **A fixture mutation that breaks MUF compilation** makes both servers print
+  the same diagnostic, which compares clean. Confirm the transcript still
+  holds the probe's output and not a compiler error.
+
+**Two method notes**, both earned the hard way. *Transcribing what a user does
+finds what reading the C does not* — five scripts from the MUCK Manual found
+eleven divergences in a week, every one in code that had passed unit tests
+written from the same C. And *a count of C call sites is not a measure of
+whether the predicate behind them exists*: an audit reported `permissions()`
+absent because upstream calls it 32 times and this server a handful, when it
+was ported, correct, and used at 13 sites.
+
 ## MPI
 
 `internal/mpi` evaluates the macro language inside property values. It is
@@ -858,6 +947,45 @@ parsing a lock from player input has to report it.
 **A lock property is displayed with names.** It is *stored* unparsed with
 fullname off — "#1" — and `displayprop` renders it with `unparse_boolexp`'s
 fullname argument set, so reading one back means re-parsing it.
+
+### The property permission predicates, and where they live
+
+`prop_read_perms` and `prop_write_perms` (`p_props.c:87`, `:129`) are the gate
+on seventeen property primitives, and they rest on the `Prop_*` classifiers —
+`Prop_System`, `Prop_Private`, `Prop_Hidden`, `Prop_ReadOnly`, `Prop_SeeOnly`.
+
+**The classifiers live in `internal/props`** (`perms.go:54-85`), not in
+`internal/game`, and the reason is a type that is absent: they take a **path
+string, not a ref**, so there is no coupling to the object graph and
+`internal/muf` can reach them without importing `internal/game`. That move
+collapsed **four** copies, two of which had drifted from the C in opposite
+directions — one case-insensitive where `is_prop_prefix` (`fbstrings.c:1152`)
+compares bytes, one doing no leading-`/` trim. An eighth copy turned up later
+in the MPI macro path. If a property rule needs a predicate, it is already
+there; do not write copy five.
+
+**The read permissions and the write permissions are checked at different
+mucker levels**, which is why a two-rung ladder cannot test them:
+`Prop_Private`'s read clause and `Prop_ReadOnly`'s write clause are
+`mlev < 3`, while `Prop_Hidden` and `Prop_SeeOnly` are `< 4`. A case needs a
+**mucker-2 rung** to separate them.
+
+**`GETPROPSTR` has no `prop_read_perms` at all** (`p_props.c:387-401` —
+`CHECKREMOTE` and nothing else), alone among the four getters. So the shared
+helper is **split**: `Frame.getProp` is the unguarded form and
+`getPropChecked` (`internal/muf/prim_db.go:731`) adds the permission. Guarding
+them together would be the obvious tidy-up and would be a divergence — this
+reads exactly like a missing guard and is not one.
+
+**`p_array.c` skips where `p_props.c` aborts.** The `ARRAY_GET_*` family drops
+an unreadable property from its result; the plain getters refuse. And
+`ARRAY_PUT_PROP*` has its own, longer message. One family, two policies.
+
+**`NEXTPROP`'s names are rooted** — `/plainonly`, not `plainonly` — and it
+**skips** unreadable names in a loop rather than refusing, with no
+`CHECKREMOTE` at all. `ENVPROP` and `ENVPROPSTR` test only the object the walk
+**landed on**, after the walk, with the **untrimmed** name, and `CHECKREMOTE`
+only the object it started from.
 
 ## The four checkflags searches
 
@@ -1741,6 +1869,43 @@ of where things are; Emerald stores each object's location too, so `Fix`
 corrects every object's fields first and rebuilds the chains from the locations
 afterwards.
 
+## The name, and what keeps its old spelling
+
+**"Fuzzball" spelled out is upstream's name. "FB" is an abbreviation Emerald
+shares as attribution** — upstream uses it itself, in `fbmuck`, `fb7` and
+`Muck2.2fb7.21` — so it reads as lineage rather than encroachment. That is the
+whole rule, and it is what makes the decisions consistent rather than
+arbitrary. It is not a legal matter: upstream has no naming policy and its
+only additional licence term is the OpenSSL linking exception. It is courtesy.
+
+So `fuzzball_emerald` went and these stay, every one of them `fb` rather than
+`fuzzball`: the binaries `fbemerald` and `fbeconfig`, all 21 `FBE_*`
+environment variables, `/etc/fbemerald/tls`, `leaseClass`, and the Postgres
+database, user and network names. Two of those would break things if renamed
+and the reasons are worth knowing — `FromEnv()` has **no legacy-name table**,
+so a missed variable reads as "keep the default" rather than an error and a
+rename silently drops every setting on an existing deployment; and the MCP
+package names `org-fuzzball-*` are a **wire protocol** negotiated with the
+client, so they are not ours to change at all.
+
+**The working directory is deliberately still
+`~/Repositories/fuzzball_emerald`** while the module path is
+`github.com/FatmanUK/emerald_fb`. Nothing reads the directory name, and the
+mismatch is a decision rather than an oversight — do
+not "fix" it. One consequence of the repository rename is worth knowing:
+GitHub redirects the old URL permanently for `git`, but a Go module path
+cannot be reached by its old name, so
+`go install github.com/FatmanUK/fuzzball_emerald/cmd/fbemerald@latest` fails
+with "module declares its path as". No tags exist, so nothing is pinned.
+
+**Every project on this machine keeps its `.geany` file in the repository
+root, gitignored** — `tlsthing`, `kdbx_vault`, `todo.md`, `x509_heliodor`,
+`boot_iolite` — so that is a convention, not an oversight, and
+`boot_iolite/iolite.geany` shows the filename need not match the directory.
+A rename sweep must leave `.gitignore`'s line alone: renaming it un-ignores
+the live file, which Geany re-saves at its own path, and `git add -A` then
+stages somebody's editor state. That cost two commits once already.
+
 ## Deliberate divergences from Fuzzball
 
 Worth knowing before "fixing" something that looks wrong:
@@ -1775,6 +1940,20 @@ Worth knowing before "fixing" something that looks wrong:
 - **`maxMetalinkDepth` is a backstop upstream does not need.** Not,
   as this list said until the walkthrough disproved it, a behaviour
   upstream lacks: `@link` does refuse a ring. See "Exit traversal".
+- **Integer `IBOUNDS` is not ported.** `arith_good` (`fbmath.c:54`) is
+  `test <= INT_MAX && test >= INT_MIN` — 32-bit bounds — and Emerald's
+  integers are int64, so porting it would raise the bounds error flag for
+  arithmetic this server performs correctly. The *float* bounds handling is
+  ported in full, at twenty-six sites; only the integer half is declined, and
+  the error-flag name `IBOUNDS` still exists because a program can name it.
+- **Upstream's `log_program_text` contains an infinite loop, and it is
+  deliberately not reproduced.** `log.c:304-311` is
+  `while (first) { if (!first->this_line) continue; ... first = first->next; }`
+  — the `continue` skips the advance, so one line with no text hangs the
+  server inside a program save. Emerald's version advances. This is recorded
+  because a faithful re-port is the obvious thing to do and would hang the
+  world; the rule elsewhere in this file is to reproduce what the C does, and
+  this is the exception that needs saying out loud.
 - **A regexp using a backreference or lookaround fails to compile.** Go's
   `regexp` is RE2, which has neither, and `compileRegex`
   (`internal/muf/prim_string2.go:319`) lets the compile fail rather than
