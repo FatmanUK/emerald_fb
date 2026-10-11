@@ -528,7 +528,8 @@ None of them goes through `match_controlled` upstream; each matches
 for itself and applies its own rule:
 
 - `@unlink` also accepts `controls_link`, so upstream lets the
-  destination's owner unlink an exit where Emerald refuses them.
+  destination's owner unlink an exit where Emerald refused them —
+  **done**, with the real refusal, at `internal/game/build.go:656`.
 - `@link` — **done.** It lets a builder who controls nothing *seize*
   an unlinked exit, because `do_link` tests `controls` only when the
   exit already points somewhere (`create.c:161`). See "What `@link`
@@ -593,9 +594,16 @@ agree whichever way it is written. `internal/game/matcher_test.go`
 covers it, including the half that must keep working: a wizard still
 reaches a remote player.
 
-**Two more call sites are wrong and are not fixed here**, because
-their matchers are structurally different rather than merely too
-wide, and each needs its own work:
+**Two more call sites were wrong and are fixed now** — `26d7897` for
+MUF `MATCH` and `b9dfdf9` for MPI's — because their matchers are
+structurally different rather than merely too wide, so each needed
+its own work. The
+descriptions below are what was wrong; both now match the C.
+`mufHost.Match` (`internal/game/muf.go:264`) is the conditional tree,
+`$`-prefix to `Registered()` alone and `Absolute().Player()` only
+when wide; `mpiHost.Match` (`internal/game/mpi.go:111`) is
+`mesg_dbref_raw`'s four keywords, then the five-stage local search,
+then the wider one only on failure.
 
 - **MUF `MATCH`** (`internal/game/muf.go`'s `mufHost.Match`).
   `prim_match` (`p_db.c:765`) does not call `match_everything` at
@@ -711,8 +719,15 @@ validates that the destination exists and calls `h.SetLinks`. The
 same is true of `SETLINKS_ARRAY` against `p_db.c:3903`, which also
 enforces "Only one player, room, or program destination allowed."
 Both are reachable at mucker 3, so a program can do what `@link`
-refuses. Not fixed here: it is a primitive apiece, not a branch of
-the command this commit was about.
+refuses. Deferred at the time as a primitive apiece rather than a
+branch of the command that commit was about, and **done in
+`809269a`**: `internal/muf/prim_db.go:1723` now carries
+`prog_can_link_to`, the permission test, "Exit is already linked.",
+the loop check and the per-type switch, with `SETLINKS_ARRAY`'s
+`array_is_homogenous`, `MAX_LINKS` and "Too many destinations. (2)"
+beside it. Fifteen lines became a hundred and twenty, and three of
+upstream's own branches turned out to be dead — reproduced as dead.
+`internal/golden/setlink_test.go` compares it.
 
 ### MPI read every number wrongly, in four separate ways
 
@@ -752,7 +767,8 @@ and an explicitly empty pad string was silently treated as a space
 where upstream aborts "Null pad string."
 
 **3. `{max}`, `{min}` and the four ordering tests do not use `atoi`
-at all — not fixed.** They use `msg_compare`, which compares
+at all — fixed, along with the rest of this group; see "All seven are
+done" below.** They use `msg_compare`, which compares
 numerically only when **both** arguments are numbers and as strings
 otherwise. And `{max}`/`{min}` return the argument *text* rather
 than a number, taking exactly two arguments rather than folding over
@@ -1026,22 +1042,26 @@ that was *found* and then failed `could_doit` -- so it was the wrong
 answer for a name that matched nothing, and "I don't know which way
 you mean." for an ambiguous one is upstream's nowhere.
 
-### Two preferred types are still unset
+### Two preferred types were unset; one is wired now
 
 `choose_thing`'s type preference is wired at the thirteen call sites
-that can reach it. Two of upstream's cannot be wired as things stand:
+that can reach it. Two of upstream's could not be wired as things
+stood:
 
-- **`RMATCH`** (`p_db.c:888`, `TYPE_THING`) is not a `Matcher` in
-  Emerald at all — `internal/muf/prim_db.go` walks the container's
+- **`RMATCH`** (`p_db.c:888`, `TYPE_THING`) was not a `Matcher` in
+  Emerald at all — `internal/muf/prim_db.go` walked the container's
   contents and exits itself with a case-folded name comparison, so
-  there is no tie to break and no preference to express. Worth
-  rebuilding on `Matcher.Inside`, which is already `match_rmatch`.
+  there was no tie to break and no preference to express. **Done in
+  `26d7897`**, rebuilt on `Matcher.Inside` — which was written for
+  this and had no callers until then — so it now has partial
+  matching, `#-2` for an ambiguous name, `choose_thing`, the
+  preferred type and the PROGRAM/EXIT argument refusal.
 - **The `connect` action** (`interface.c:1084`, `TYPE_EXIT`) is looked
   up at login, and Emerald reaches it through `can_move` rather than
-  its own match.
+  its own match. Still open.
 
 Neither is observable without two exact matches of one name in one
-container, which is why they are recorded rather than chased.
+container, which is why the second is recorded rather than chased.
 
 ### Boarding a vehicle is covered now
 
@@ -1117,10 +1137,11 @@ which corrected the record.
 - A third has been fixed: the stack underflow aborts said "stack
   underflow" where upstream says "Stack underflow."
 
-**Worth re-checking the rest of the mucker table for the same
-shape.** `SETNAME` was found by chasing a message; nothing surveys
-the 34 gated names against their enclosing guards, so another false
-floor would look exactly like a deliberate one.
+**The rest of the mucker table was re-checked for the same shape**,
+and the survey is below under "The mucker table surveyed": all
+thirty-four against their enclosing guards, nine false floors and one
+missing. `SETNAME` was found by chasing a message, which is what
+prompted it.
 
 `STRCAT`'s "Non-string argument." agrees exactly, which is why the
 ANSI case uses it to produce an error report.
@@ -1380,7 +1401,10 @@ God rule, not a wizard one — a mortal may set it on their own
 things, and a plain wizard may *not* quell a colleague.
 
 **`wiz_vehicles`, `exit_darking` and `thing_darking` gained their
-only reader**, three of the 69 `@tune` parameters read nowhere.
+only reader**, three of the 69 `@tune` parameters that read nowhere
+*at the time*. Tranche E closed 24 more; the figure today is **45**,
+of which 21 are marked `Inert` with a reason and 12 are the
+`file_log_*` family `internal/logging` replaced.
 
 **The force guard had no equivalent.** WIZARD and the mucker bits
 may never be forced; XFORCIBLE may be forced on an exit and nowhere
@@ -1445,18 +1469,34 @@ Found while deciding whether the mucker rules'
 wizard, `tp_realms_control`'s walk up the environment for a
 W-flagged room you own, and an **ownership lock** —
 `MESGPROP_OWNLOCK`, tested false-by-default. `Server.controls`
-(`look.go:422`) reads only the first.
+(`look.go:422`) read only the first; **the ownlock is read now** and
+`realms_control` is not.
 
-`realms_control` defaults off and is one of the 69 unread `@tune`
-parameters, so nothing diverges today. The **ownlock does diverge**:
-`@ownlock` writes `@/olk`, `examine` displays it as "Ownership
-Key", and nothing in the server consults it — the same shape as
-`_/oecho`. A world that hands out an ownlock finds it inert. The
-immediate consequence for `@set` is that the ownership clause in
-both mucker rules cannot fire here while upstream can reach it, and
-the refusal a player sees is `match_controlled`'s wording instead;
-`TestSetFlagMuckerOwnershipClauseIsUnreachable` pins that so the
-change is noticed when `controls` is fixed.
+`realms_control` defaults off and is one of the parameters nothing
+reads — 45 of them now, not the 69 this document said before tranche
+E — so nothing diverges today, and `internal/world/world.go:686`
+records that it is still unread.
+
+**The ownlock did diverge and is fixed in `191e814`.** `@ownlock`
+wrote `@/olk`, `examine` displayed it as "Ownership Key", and nothing
+consulted it — the same shape as `_/oecho`, so a world that handed
+one out found it inert. `World.Controls` now runs
+`MESGPROP_OWNLOCK`'s `test_lock_false_default` through
+`World.OwnLockPasses`, installed at `internal/game/server.go:158`
+with a re-entrancy guard, because evaluating a lock can reach
+`controls` again.
+
+The consequence for `@set` was that the ownership clause in both
+mucker rules could not fire here while upstream could reach it, so a
+player saw `match_controlled`'s wording instead. The pin that said so
+has been renamed to match:
+`TestSetFlagMuckerClauseReachedThroughOwnlock`
+(`internal/game/setflag_test.go:192`).
+
+Landing it also turned up **a latent data race in four test
+harnesses**: `Engine.Run` reads its hooks without a lock and they
+were being installed after it started — invisible until `game.New`
+began queueing work of its own.
 
 ### A trailing space on a second argument is lost
 
@@ -1467,9 +1507,10 @@ and nothing right-trims `arg2` — `game.c:706` right-trims `arg1`
 only, after the `=` split, and `process_command` does not touch the
 line it is given.
 
-This server trims the **whole line** at intake
-(`command.go:153`), so the second argument of every `=`-taking
-command loses its trailing whitespace. For most of the forty-odd
+This server trimmed the **whole line** at intake, so the second
+argument of every `=`-taking command lost its trailing whitespace.
+**Fixed in `0c7f1d5`**: `internal/game/command.go:170-177` is
+left-trim only, and says so. For most of the forty-odd
 such commands it is invisible; for `@set`'s flag form it changes the
 answer, and for `@propset` — where a value may deliberately begin or
 end with a space — it changes what is stored. Fixing it means
@@ -1547,8 +1588,8 @@ every `examine` showed bare dbrefs.
 
 §2.3.3. `match_exits` (`match.c:588`) **promotes a
 default-priority exit from 1 to 2** when `compatible_priorities` is
-set, which it is by default — one of the 69 `@tune` parameters
-nothing in this server consulted.
+set, which it is by default — one of the parameters nothing in this
+server consulted, 69 of them when this was written and 45 now.
 
 Without the promotion an exit hanging on a THING beats a plain exit
 on the room: both are `PLevel` 1, and a strictly higher level
@@ -1848,7 +1889,9 @@ came out wrong. Two rules replace both:
 
 Run against all thirty-four plus SETNAME, the two together flag
 precisely the nine findings and SETNAME, with **zero false positives
-among the 25 genuine floors**. Both are load-bearing: SETNAME has a
+among the 25 genuine floors** — 34 surveyed, less nine false plus the
+one missing, which is the **26** the table holds today. Both are
+load-bearing: SETNAME has a
 bare abort body and is caught only by the depth rule, while SETOWN
 and ADDPENNIES are at depth 0 and caught only by the body rule. A
 third rule, **splitting a condition on its top-level `||`**, recovers
