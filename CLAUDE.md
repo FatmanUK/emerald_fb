@@ -990,9 +990,17 @@ each of the pair. `_arrive`, `_oarrive`, `_connect` and the rest are
 environment walks from the **mover**, so `getparent` takes them through the
 room and upwards in one pass. `_lookq` walks from whatever was looked at, and
 its argument is that object's dbref written `#123` where every other queue
-passes a word. And the `_connect` pair fires on **every** connection where the
-"has connected" line and the `connect` action fire only on the first, which
-upstream's own comment calls odd.
+passes a word.
+
+**Which parts of a connection are first-only is not what this file used to
+say**, and the third seat settled it (`a40888d`); `internal/game/login.go`'s
+`announceConnect` is the authority and carries the correction in place. The
+`_connect` pair fires on **every** connection. So does the "has connected."
+line, which is gated on DARK alone. What waits for the *first* connection is
+the `connect` **action** and the puppets waking up, which upstream's own
+comment calls odd and leaves alone. A command's replies likewise go to
+**every** connection a player has — which is why the per-descriptor
+arithmetic needs a third seat to observe at all.
 
 **`listenqueue` is propqueue's near-twin with four differences that all
 matter.** It is gated on the LISTENER flag (or the owner being ZOMBIE). Its
@@ -1048,8 +1056,17 @@ which is what `@examine` shows when something still points at it.
 ordering is most of what anybody sees: `#0` is `default_room_parent`'s value
 and `#1` is `toad_default_recipient`'s, so neither `@recycle here` nor
 `@recycle me` ever reaches "Room #0 contains everything" or "You can't recycle
-a player!" Its *permission* rules are still `resolveControlled`'s and still
-diverge — see that function's doc comment.
+a player!"
+
+Its permission rule is **`controls()` directly**, with a refusal that has two
+spellings — "That's already garbage!" for a recycled ref and "Permission
+denied." otherwise (`internal/game/build.go:1473-1483`). This file used to say
+the rules were `resolveControlled`'s and "still diverge", pointing at that
+function's doc comment; **`resolveControlled` no longer exists.** It was a
+shared helper four commands leaned on that refused before any of them could
+apply its own rule, and porting the four removed both it and the divergence
+(`docs/upstream-coverage.md:548`). The name survives in a dozen comments as
+history; there is no such function to read.
 
 ## ANSI
 
@@ -1197,10 +1214,11 @@ could read passwords and change ownership. The table records only
 identical: `(mlev < 4) && !permissions(...)` means "a wizard **or** the owner",
 and recording it as a floor refuses the owner.
 
-**All thirty-four entries have been surveyed — nine were floors the C does not
-have and one real floor was missing.** The extractor is no longer a token list
-with a hand-written exception set; it applies two *structural* rules, and both
-are load-bearing:
+**All thirty-four entries were surveyed in `0b470af` — nine were floors the C
+does not have and one real floor was missing**, which is how the table came to
+hold the **26** it has today. The extractor is no longer a token list with a
+hand-written exception set; it applies two *structural* rules, and both are
+load-bearing:
 
 - **the guarded statement must be a bare `abort_interp(...)`** — any other body
   means the `mlev <` test picks a *scope*, not a refusal, which is what five
@@ -1214,10 +1232,13 @@ test, which is what recovers `RECYCLE`'s floor, and an `mlev <` whose
 right-hand side is not a known literal or tunable is now a **generator
 failure** rather than a silent drop. Three tunable floors —
 `addpennies_muf_mlev`, `movepennies_muf_mlev`, `pennies_muf_mlev` — are
-checked inline, because a `map[string]int` cannot hold a gate a world can move
-at runtime. `HELD_FLOOR` holds the one entry that is *not* from the C:
-`MOVETO`, deliberately still gated because this server's version of it is a
-bare `h.MoveTo` with none of `prim_moveto`'s type switch.
+checked inline, because the table cannot hold a gate a world can move at
+runtime.
+
+**There is no longer an entry that is not from the C.** `HELD_FLOOR` held
+`MOVETO` while this server's version of it was a bare `h.MoveTo`; `3e274ff`
+ported `prim_moveto`'s type switch and removed both the held floor and the
+mechanism, so every entry now comes from an `mlev <` check in the C.
 
 **A program runs at its own mucker level**, bounded by its owner's — not at its
 owner's level — and that level is read **per run**, from `Host.ProgMLevel`.
@@ -1318,11 +1339,19 @@ that is reproduced, because transcripts are compared against it.
 
 **Error messages are upstream's wording**, not descriptions: "Invalid argument
 type.", "Non-string argument.", "Variable number out of range." Programs match
-on them. Three are still wrong and are recorded in
-`docs/upstream-coverage.md`: `+` reports itself as `++` with "Invalid
-datatype.", `SETNAME` checks its argument's type before the permission rather
-than after, and a fourth was "stack underflow" against upstream's "Stack
-underflow." — that one is fixed.
+on them, so a one-byte difference is a compatibility break.
+
+**None of the four this file used to list as wrong is wrong now**, and two of
+them were never wrong — the record is `docs/upstream-coverage.md:1080-1100`.
+`+` was supposed to name itself `++` and say "Invalid datatype."; driving
+`1 "a" +` through both servers gives byte-identical output, so the entry was
+wrong in both halves. `SETNAME` was supposed to check its argument's type
+before the permission; upstream does exactly that (`p_db.c:678-688`), and the
+real fault behind the complaint was a **mucker-4 floor that does not exist**.
+"stack underflow" against "Stack underflow." was a real one and is fixed. The
+lesson is the one `docs/upstream-coverage.md:116` draws: a recorded
+divergence nobody re-measures is as costly as an unrecorded one, because it
+sends the next reader to fix something that already agrees.
 
 **MUF does not abort on integer division by zero.** The result is `0` and an
 error flag the program reads with `is_set?`. Aborting ends programs that
