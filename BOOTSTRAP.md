@@ -34,19 +34,28 @@ that have aged worst in the C:
   `@credits`, with the texts in Postgres and a configurable welcome banner.
 - **The configurator is in**: `cmd/fbeconfig`, an optional web interface over
   the same database, read-only while the server runs.
-- **The command surface is essentially complete.** `commandTable` carries
-  every name Fuzzball dispatches: **109 rows, 100 with handlers, 9
-  without**, and five of those nine are declined outright rather than
-  missing. What is left is `@armageddon` and `@restart` (process
-  lifecycle) and `@mcpedit` and `@mcpprogram` (the MCP editor drive). See
+- **The command surface is complete.** `commandTable` carries every name
+  Fuzzball dispatches: **109 rows, 102 with handlers, 7 declined** with a
+  reason, and nothing between the two —
+  `TestEveryDispatchedNameIsAnsweredOrDeclined` asserts it. `@mcpedit` and
+  `@mcpprogram` landed in `7fde390`; `@armageddon` and `@restart` joined
+  the declined set by decision, because process lifecycle belongs to the
+  container runtime rather than to a command inside the game. See
   `docs/upstream-coverage.md`, which is the audit and the authority.
 - **Every compiler directive now works**, including the six conditionals
   that used to be treated as false. They are answered through two
   callbacks rather than by giving the compiler a world.
 
-Two behaviours are deliberately not ported: `DEBUGGER_BREAK`'s interactive
-prompt, and the MPI tracer behind `{debug}`/`{debugif}`. Both would mean
-taking over a connection's input, which nothing else in this server does.
+`DEBUGGER_BREAK`'s interactive prompt is deliberately not ported: it would
+mean taking over a connection's input, which nothing else in this server
+does, so tracing is forced on for the rest of the run instead.
+
+The MPI tracer behind `{debug}`/`{debugif}` is a **gap rather than a
+decision**, and this file used to give it the same reason, wrongly — a
+tracer only *prints*, so nothing about it needs a connection's input.
+`{debug}` and `{debugif}` evaluate their argument plainly
+(`internal/mpi/impl_misc.go:316`): the text they produce is the same and
+only the diagnostics are missing.
 
 ## 2. Next Three Steps
 
@@ -156,8 +165,8 @@ Its first half changes nothing and had to come first:
   maintained it before, so `@sweep` could not have told the truth. It is set in
   one place and cleared in none, which is upstream's; `World.IsListener` tests
   the flag *and* the property, which is what makes the staleness invisible.
-- **`@sweep` has landed**, which takes the table to 100 handlers of 109 names
-  and leaves nine, five of them declined.
+- **`@sweep` has landed**, which took the table to 100 handlers of 109
+  names at the time, leaving nine. It is 102 and 7 declined now.
 - **A recycled dbref comes back** — not in the plan, found by `@sweep`'s
   golden case. `World.Create` now hands out a garbage ref before allocating a
   fresh one, which is `new_object`; Emerald always allocated past its ceiling,
@@ -174,9 +183,11 @@ a listener answer *after* the line that woke it.
 
 Two findings from writing its golden case, each wider than the step:
 
-- **MPI's `{force}` is half implemented** — the whole unblessed path, seven
-  refusals, is missing, and MPI reports only the innermost failing function
-  where upstream walks back out. Recorded, not built.
+- **MPI's `{force}` was half implemented** — the whole unblessed path,
+  seven refusals, missing. Built since; see
+  `docs/upstream-coverage.md`'s "MPI's {force} is implemented". MPI
+  reporting only the innermost failing function where upstream walks back
+  out is a separate gap and is still open.
 - **`trigger` had no bound on metalink recursion**, so an exit linked to
   itself crashed the server on the Go stack — as it does upstream on the C
   stack. Bounded, which is the one deliberate divergence in the tranche.
@@ -205,9 +216,13 @@ malformed sequence went out as written.
   and are the only primitives that do.
 
 Probing four deliberate program failures through both servers to find an error
-message they word identically turned up **three that they do not** — `+`
-reporting itself as `++`, `SETNAME`'s check order, and a stack underflow whose
-wording is now fixed. Recorded in `docs/upstream-coverage.md`.
+message they word identically turned up **three that appeared not to** — `+`
+reporting itself as `++`, `SETNAME`'s check order, and a stack underflow.
+**Re-measured, none of the three stands**: the stack underflow was real and
+is fixed, and the other two were never divergences —
+`docs/upstream-coverage.md:1080` has the measurement, and this is the
+project's standing example of why a recorded divergence has to be
+re-measured before it is acted on.
 
 **`choose_thing` is ported**, all four tie-breaks and the coin toss. It
 decides an *exact*-match tie and nothing else, which is narrower than it
@@ -223,44 +238,68 @@ Collapsing `getparent` came with it: it had been ported **twice**, once in
 `internal/game/enter.go` for the loop checks. The two were equivalent, which
 was luck; there is one now, and `World.EnvDistance` is built on it.
 
-**The next step is one of these, in no forced order:**
+**Everything that roadmap listed is done**, and the roadmap itself is gone
+from this file rather than kept as a to-do — all three structurally divergent
+permission refusals, MPI's `{force}`, `@bless` on directories, `home` as a
+direction, look traps, boarding a vehicle, `@tune`'s God level, the `_sys`
+properties (six, not four), and the two MUF error messages that turned out
+never to have been divergences. What follows is the record of the work after
+it.
 
-1. **The three structurally divergent permission refusals** — `@link`'s
-   seizing of an unlinked exit, `@unlink`'s `controls_link`, and `@recycle`
-   being *stricter* than `controls`. Each is its own commit and each changes
-   who may do what.
-2. **MPI's `{force}`**, which has none of its unblessed path: seven refusals
-   and a blessed gate that reads `!allow_zombies && !blessed` upstream.
-3. **The smaller recorded gaps**, listed below — `@bless` on directories,
-   `home` as a direction, the four `_sys/` properties, look traps, boarding a
-   vehicle, and the two MUF error messages.
+**The eight-commit plan, `1d555e3`…`1759a4e`.** A mucker-4 program could
+`#0 recycle` and turn the global environment into garbage. `fbemerald init`
+landed, so the project no longer needs Fuzzball's world to stand up. `@set`
+wrote the properties `@propset` refuses, and `@set me=!W` worked, so the only
+wizard in a world could strip its own bit. The manual's first tutorial page
+broke `@link`, with four more faults behind it. MPI ran only on text
+containing a `{`, and could not resolve `this`. `{&cmd}` and `{&arg}` were
+empty everywhere, the puppet relay fired twice, and `_/oecho` was written,
+displayed and read nowhere.
 
-Smaller things still open, each self-contained:
+Two habits earned that whole tranche and are the reason the plan after it was
+ordered as it was: **transcribing what a user does finds what reading the C
+does not**, and **a passing golden case is not evidence the code ran.**
 
-- **Three commands' permission refusals** — `@link`, `@unlink` and
-  `@recycle` — are structurally divergent, not just differently worded.
-  See `resolveControlled`'s doc comment for what each needs.
-- **`@tune`'s God level.** `TUNE_MLEV` gives `#1` 255 and `GOD_PRIV` raises
-  the fourteen `file_*` parameters to match; the generator collapsed both to
-  `MLEV_WIZARD` and recorded `GodOnly`, which nothing reads. `SETSYSPARM`
-  also cannot tell bad syntax from a bad value. Both are invisible to the
-  oracle, whose player is `#1`.
-- **`@bless` does not bless directories**, which upstream does. The effect is
-  confined to the count and to `examine`'s marker, and making it agree needs
-  a flag that can live on a valueless node — `internal/props`, `examine` and
-  the store together.
-- **MPI's `{force}`** has none of its unblessed path: seven refusals, and a
-  blessed gate that reads `!allow_zombies && !blessed` upstream. MPI also
-  reports only the innermost failing function where upstream walks back out,
-  which affects every nested failure.
-- **`home` is matched as a command**, where upstream reaches it inside
-  `can_move` gated by `enable_home`, so it is a *direction*.
-- **The four `_sys/` properties** upstream writes on #0 at boot —
-  `startuptime`, `maxpennies`, `dumpinterval`, `max_connects` — are not
-  written, so MUF reading them gets nothing. `uptime` works because the
-  server keeps its own start time.
-- **Look traps** — the `_details` propdir, consulted when a look finds
-  nothing — are the one part of `do_look_at` still missing.
+**Then tranches A through F.** Their findings are in
+`docs/upstream-coverage.md`, which is the authority; this is what each one
+was.
+
+- **A — the MUF and MPI permission model.** Nine commits. A mucker-1 program
+  could set WIZARD on any object: MUF `SET` had none of `prim_set`'s four
+  guards. The cause was systematic, and `mlev_gen.go`'s own doc comment
+  describes it — 122 `mlev` tests upstream against 26 recorded floors, 61
+  `CHECKREMOTE`s against five, `prop_read_perms`/`prop_write_perms` ported
+  nowhere. MPI's half was the same: no property safety layer and no locality
+  test, so seven functions resolved any object anywhere.
+- **B — the recorded behaviour-depth gaps.** Thirteen commits,
+  `191e814`…`05fd9e5`. The **ownership lock**, which was written, displayed
+  and read nowhere; `unparse_object`'s three missing clauses; MUF `SETLINK`
+  and `SETLINKS_ARRAY`, fifteen lines for a hundred and twenty; intake
+  trimming; `RMATCH`, which was not a matcher at all; `@link`'s
+  multi-destination fan-out; and `@bless` on propdirs.
+- **C — two seats in the harness, and then a third.** The last class of
+  output no test could see: a line addressed to somebody else. `page` and
+  `whisper` were wrong in nearly every line; `@wall` needed a third seat,
+  because nothing else can observe per-descriptor delivery.
+- **D — `@mcpedit`, `@mcpprogram` and the MCP packages.** The last two
+  commands, and the four packages that were advertised with no server
+  handling.
+- **E — the unread `@tune` parameters.** Twelve commits. Seven parameters
+  defaulted `true` and were ignored, so a fresh world diverged with no
+  configuration at all.
+- **F — hygiene and the instrument.** `go vet` had never run in CI, and
+  **the golden suite had never run there at all**: the oracle image is not
+  built on a runner, so every case hit `t.Skip` and `make test` reported
+  success having compared nothing. `golden.yml` is a separate job now, on
+  push, nightly and on demand.
+
+**And the naming work, `045eeec`…`0384900`.** The project is **Emerald FB**;
+the repository and module path are `github.com/FatmanUK/emerald_fb`. The rule
+is that "Fuzzball" spelled out is upstream's name while "FB" is attribution —
+upstream uses it itself — so `fbemerald`, `FBE_*`, `/etc/fbemerald` and the
+MCP package names all stay. `CLAUDE.md` has the rule and what it decides.
+Behind the rename sat a real bug: **four surfaces answer "what version is
+this" and Emerald gave three answers**, with nothing comparing any of them.
 
 ### How it got here
 
@@ -433,8 +472,8 @@ the caller's own pid explicitly.
 ### 3.2 Architecture
 
 ```
-cmd/fbemerald/          — the server: serve, import, migrate, tune,
-                            help-seed, version
+cmd/fbemerald/          — the server: serve, init, import, migrate,
+                            tune, help-seed, version
 cmd/fbeconfig/          — the optional web configurator
 internal/ref/           — dbrefs (Ref), object types, the flag word
 internal/props/         — per-object property trees (case-insensitive, blessed)
@@ -638,8 +677,17 @@ read. No Go package imports it.
 Most recent first. `git log` has the full history back to M0, and every
 message explains its own findings.
 
-| Commit | Summary |
+Entries since `f1bdf5a` are deliberately summarised by *tranche* rather
+than per commit — there are roughly forty of them and `git log` is the
+per-commit record. What each tranche found is in §2 above and, in detail, in
+`docs/upstream-coverage.md`.
+
+| Commit range | Summary |
 |---|---|
+| `9adfe67`…`0b8b45c` | **Tranche H**, in progress: harvesting the plan file's record into `CLAUDE.md` and `docs/upstream-coverage.md`, and correcting what had drifted. `CLAUDE.md` had the connect gating backwards, and the coverage doc contradicted itself in three places. |
+| `045eeec`…`0384900` | **The naming work.** The project is Emerald FB; module path `github.com/FatmanUK/emerald_fb`. Behind it: four version surfaces gave three answers, and `__version` must be installed *unquoted* or `$ifdef __version>…` takes the older branch on every build. |
+| `191e814`…`e32ff6c` | **Tranches A–F.** The MUF and MPI permission model, the recorded depth gaps, the multi-seat harness, the MCP commands and packages, the unread `@tune` parameters, and CI — where the golden suite had never run at all. |
+| `1d555e3`…`1759a4e` | `#0 recycle` could garbage the global environment; `fbemerald init`; `@set` wrote what `@propset` refuses; `@set me=!W` let the only wizard strip its own bit; MPI ran only on text containing a `{`. |
 | *(pending)* | Containment, exit destinations, registration, building, the six compiler conditionals. Groups C–E of the movement plan plus two of F. One commit rather than four because GPG's pinentry timed out on every attempt; the message carries the four sections. |
 | `f1bdf5a` | **A typed line is three strings**, and `enter_room` is ninety. COMMAND was the argument at every launch site; `say`/`pose`/`@wall`/`gripe` lost leading whitespace; four movement `@tune` parameters were read nowhere. |
 | `e0a06f2` | `@owned`, `@contents`, `@entrances`, and `@find` done properly — `*…*` wrapping, `lookup_cost` charged, an invented 200-result cap gone. `internal/muf`'s `FlagCheck` exported rather than ported twice. |
@@ -676,15 +724,32 @@ they are read-only reference.
 
 ## 6. Testing Status
 
-All green as of the pending commit above:
+All green. `make check` is the gate — vet, formatting, the width check and the
+whole suite — and the golden suite runs inside it, taking about 225 of its
+seconds.
 
-- `go vet ./...` — clean
+- `go vet ./...` — clean, and **it had never run in CI** until `e32ff6c`;
+  `test.yml` ran `fmt-check`, `width-check` and `make test` and stopped
+  short of vet.
 - `make fmt-check` — clean (gofmt plus the 70-column reflow)
-- `make width-check` — no new line over 70 columns
+- `make width-check` — no new line over 70 columns. Note it defaults to
+  `RANGE=HEAD`, the uncommitted *tracked* work, so it reports clean for a new
+  untracked file; check the **staged** diff instead, as `CLAUDE.md` says.
 - `make test` (`go test -race ./...` against a scratch Postgres schema) —
-  clean, no data races, across ~670 test functions
-- `make golden` — all 28 differential suites against a live Fuzzball 7
-  container. The twelve added since tranche 1:
+  clean, no data races
+- `make golden` — **95 differential test functions** against a live
+  Fuzzball 7 container, up from the 28 this file used to list.
+
+**The golden suite had never run in CI at all**, and that is the largest
+instrument failure in the project's history: the oracle image is not built on
+a runner, so every case hit `t.Skip` and `make test` reported success having
+compared nothing. `golden.yml` is a separate job now — on push, nightly and
+on demand — added in `e32ff6c`. The suite is still entirely sequential, with
+no `t.Parallel()` anywhere; the blockers are narrow and located, and are in
+the plan file's tranche G.
+
+The twelve suites added during tranche 1 of the command-gap plan, kept
+because the table is a useful index into what each covers:
 
   | Suite | Covers |
   |---|---|
